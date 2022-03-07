@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 95%;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.page-header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 2rem;
+}
+.page-header__title {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2rem;
+  color: #696969;
+  font-weight: bold;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 1rem;
+}
+
+.costs {
+  display: flex;
+  flex-direction: column;
+}
+.costs__add {
+  width: 20%;
+  height: 3rem;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  border: 1px solid #25a79a;
+  border-radius: .3rem;
+  background-color: #25a79a;
+}
+.costs__table {
+  margin: 1rem 0;
+  border: 1px solid #aeaeae;
+  border-collapse: collapse;
+}
+.costs__table__th {
+  border: 1px solid #aeaeae;
+  padding: .5rem 0;
+  background-color: #696969;
+  color: #ffffff;
+}
+.costs__table__td {
+  border: 1px solid #aeaeae;
+  padding: .5rem;
+}
+.costs__table__tr:nth-child(odd) {
+  background-color: #dadada;
+}
+
+.num,
+.date,
+.cat {
+  text-align: center;
+}
+
+.val {
+  text-align: end;
+}
+
+/*# sourceMappingURL=style.css.map */
