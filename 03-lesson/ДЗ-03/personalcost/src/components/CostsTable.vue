@@ -10,13 +10,13 @@
       <td
         class="costs__table__td num"
         :class="{
-          num: index === 0,
-          date: index === 1,
-          cat: index === 2,
-          val: index === 3,
+          num: id === 'id',
+          date: id === 'date',
+          cat: id === 'category',
+          val: id === 'value',
         }"
-        v-for="(item, index) in cost"
-        :key="index"
+        v-for="(item, id) in cost"
+        :key="id"
       >
         {{ item }}
       </td>
@@ -30,6 +30,7 @@ export default {
   props: {
     costs: {
       type: Array,
+      default: () => [],
     },
   },
 };

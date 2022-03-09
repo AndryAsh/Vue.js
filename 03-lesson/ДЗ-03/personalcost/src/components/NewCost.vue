@@ -1,9 +1,9 @@
 <template>
   <div class="costs__add">
     <button @click="clickedAddCost()" class="costs__add-button">
-      add new cost
+      {{ showFormNewCost ? txtBtnClose : txtBtnAdd }}
     </button>
-    <form v-show="showFormNewCost" class="costs__add-form">
+    <form action="!#" v-show="showFormNewCost" class="costs__add-form">
       <label for="cost-description">Описание платежа</label>
       <input
         v-model="descriptionCost"
@@ -25,7 +25,10 @@
         class="costs__add-form__input"
         type="number"
       />
-      <button @click="onSaveClick()" class="costs__add-button add-form-button">
+      <button
+        @click.stop.prevent="onSaveClick()"
+        class="costs__add-button add-form-button"
+      >
         add
       </button>
     </form>
@@ -38,6 +41,7 @@ export default {
   props: {
     sizeCosts: {
       type: Number,
+      default: () => 0,
     },
   },
   data() {
@@ -46,6 +50,8 @@ export default {
       dateCost: "",
       amountCost: "",
       showNewCost: false,
+      txtBtnAdd: "add new cost",
+      txtBtnClose: "close form",
     };
   },
   computed: {
@@ -61,12 +67,12 @@ export default {
       const d = this.dateCost.split("-");
       [d[0], d[2]] = [d[2], d[0]];
       this.dateCost = d.join(".");
-      const data = [
-        this.sizeCosts + 1,
-        this.dateCost,
-        this.descriptionCost,
-        this.amountCost,
-      ];
+      const data = {
+        id: this.sizeCosts + 1,
+        date: this.dateCost,
+        category: this.descriptionCost,
+        value: this.amountCost,
+      };
       this.$emit("addNewPayment", data);
     },
   },

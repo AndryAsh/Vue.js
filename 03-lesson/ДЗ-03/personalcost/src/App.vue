@@ -33,14 +33,20 @@ export default {
   methods: {
     fetchCosts() {
       return [
+        { id: 1, date: "28.02.2022", category: "food", value: 169 },
+        { id: 2, date: "28.02.2022", category: "food", value: 169 },
+        { id: 3, date: "28.02.2022", category: "food", value: 169 },
+        { id: 4, date: "28.02.2022", category: "food", value: 169 },
+        { id: 5, date: "28.02.2022", category: "food", value: 169 },
+        /* [11, "28.02.2022", "food", 169],
         [11, "28.02.2022", "food", 169],
         [11, "28.02.2022", "food", 169],
-        [11, "28.02.2022", "food", 169],
-        [11, "28.02.2022", "food", 169],
+        [11, "28.02.2022", "food", 169], */
       ];
     },
     addNewPayment(data) {
       this.costs = [...this.costs, data];
+      console.log(this.costs);
     },
   },
   computed: {
@@ -53,7 +59,11 @@ export default {
     NewCost,
   },
   created() {
+    /* debugger; */
     this.costs = this.fetchCosts();
+  },
+  mounted() {
+    /* debugger; */
   },
 };
 </script>
