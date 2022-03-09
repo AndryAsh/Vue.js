@@ -75,6 +75,12 @@ export default {
       };
       this.$emit("addNewPayment", data);
     },
+    nextPage() {
+      this.pageNumber++;
+    },
+    prevPage() {
+      this.pageNumber--;
+    },
   },
 };
 </script>

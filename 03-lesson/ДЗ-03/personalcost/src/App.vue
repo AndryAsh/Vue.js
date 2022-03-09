@@ -8,8 +8,14 @@
         <div class="content">
           <div class="costs">
             <new-cost :sizeCosts="lengthCosts" @addNewPayment="addNewPayment" />
-            <costs-table :costs="costs" />
-            <div class="costs__pagination"></div>
+            <costs-table :costs="paginatedData" />
+            <costs-pagination
+              :pages="pageList"
+              :currentPage="pageNumber"
+              @prevPage="prevPage"
+              @nextPage="nextPage"
+              @changePage="changePage"
+            />
           </div>
           <div class="graphics"></div>
         </div>
@@ -22,12 +28,16 @@
 <script>
 import CostsTable from "./components/CostsTable.vue";
 import NewCost from "./components/NewCost.vue";
+import CostsPagination from "./components/CostsPagination.vue";
 
 export default {
   name: "app",
   data() {
     return {
       costs: [],
+      paginationSize: 5, // Шаг пагинации
+      pageNumber: 1, // Номер страницы пагинации
+      currentPage: "", // текущий элемент пагинации
     };
   },
   methods: {
@@ -38,32 +48,75 @@ export default {
         { id: 3, date: "28.02.2022", category: "food", value: 169 },
         { id: 4, date: "28.02.2022", category: "food", value: 169 },
         { id: 5, date: "28.02.2022", category: "food", value: 169 },
-        /* [11, "28.02.2022", "food", 169],
-        [11, "28.02.2022", "food", 169],
-        [11, "28.02.2022", "food", 169],
-        [11, "28.02.2022", "food", 169], */
+        { id: 6, date: "28.02.2022", category: "food", value: 169 },
       ];
     },
     addNewPayment(data) {
       this.costs = [...this.costs, data];
       console.log(this.costs);
     },
+    prevPage() {
+      this.currentPage.classList.remove("selected");
+      this.pageNumber--;
+      this.currentPage = this.selectPaginationPage;
+    },
+    nextPage() {
+      this.currentPage.classList.remove("selected");
+      this.pageNumber++;
+      this.currentPage = this.selectPaginationPage;
+    },
+    changePage(newPage) {
+      this.currentPage.classList.remove("selected");
+      this.pageNumber = Number(newPage.dataset.id);
+      this.currentPage = this.selectPaginationPage;
+    },
   },
   computed: {
     lengthCosts() {
       return this.costs.length;
     },
+    pageCount() {
+      let l = this.costs.length,
+        s = this.paginationSize;
+      return Math.ceil(l / s);
+    },
+    paginatedData() {
+      const start = (this.pageNumber - 1) * this.paginationSize,
+        end = start + this.paginationSize;
+      return this.costs.slice(start, end);
+    },
+    pageList() {
+      const lst = [];
+      for (let i = 1; i <= this.pageCount; i++) {
+        lst.push(i);
+      }
+      return lst;
+    },
+    selectPaginationPage() {
+      const el = document.querySelector(
+        `.costs__pagination__page[data-id='${this.pageNumber}']`
+      );
+      el.classList.add("selected");
+      return el;
+    },
   },
   components: {
     CostsTable,
     NewCost,
+    CostsPagination,
   },
   created() {
     /* debugger; */
     this.costs = this.fetchCosts();
+    /* this.currentPage = this.initPaginationPage(); */
   },
   mounted() {
+    this.currentPage = this.selectPaginationPage;
     /* debugger; */
+  },
+  beforeDestroy() {
+    this.currentPage = "";
+    delete this.currentPage;
   },
 };
 </script>
@@ -85,6 +138,9 @@ $white: #ffffff;
 body {
   margin: 0;
   padding: 0;
+}
+a {
+  text-decoration: none;
 }
 .container {
   max-width: 95%;
@@ -173,6 +229,24 @@ body {
       background-color: $lihgt-grey;
     }
   }
+  &__pagination {
+    &__button {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 0 0.2rem;
+      color: $dark-grey;
+      cursor: pointer;
+      background-color: $white;
+      border: none;
+    }
+    &__page {
+      color: $dark-grey;
+    }
+  }
+}
+.selected {
+  font-weight: bold;
+  color: $green;
 }
 .num,
 .date,
