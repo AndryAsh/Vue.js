@@ -32,7 +32,6 @@ export default {
   name: "app",
   data() {
     return {
-      paginationSize: 5, // Шаг пагинации
       currentPage: "", // текущий элемент пагинации
     };
   },

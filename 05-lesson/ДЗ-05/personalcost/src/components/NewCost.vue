@@ -14,11 +14,7 @@
         class="costs__add-form__select"
         type="text"
       >
-        <option
-          v-for="(item, index) in categoryList"
-          :key="index"
-          :value="index == 1 ? item : ''"
-        >
+        <option v-for="(item, index) in categoryList" :key="index">
           {{ item }}
         </option>
       </select>
@@ -67,7 +63,7 @@ export default {
   props: {
     categoryList: {
       type: Array,
-      default: () => [],
+      /* default: () => [], */
     },
   },
   data() {
@@ -126,5 +122,10 @@ export default {
       this.pageNumber--;
     },
   },
+  /* mounted() {
+    console.log(this.categoryList);
+    this.descriptionCost = this.categoryList[0];
+    //this.dateCost = Date.now();
+  }, */
 };
 </script>

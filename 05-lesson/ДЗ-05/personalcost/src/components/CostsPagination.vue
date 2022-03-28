@@ -8,7 +8,7 @@
       &lang;
     </button>
     <a
-      href="!#"
+      href="#"
       v-for="(page, index) in pages"
       :class="
         index === 0
@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     onClickPagination(event) {
+      event.preventDefault();
       if (event.target.localName === "button") {
         if (event.target.dataset.id === "prev") {
           this.$emit("prevPage");

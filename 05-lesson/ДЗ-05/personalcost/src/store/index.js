@@ -27,7 +27,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setPaymentListData(state, pNumber) {
-      const pageData = state.fullDataList[pNumber];
+      const pageData = Array.from(state.fullDataList[pNumber]);
       if (!state.paymentList.length) {
         for (let item of pageData) {
           item['page'] = pNumber;
@@ -42,6 +42,15 @@ export default new Vuex.Store({
             item['page'] = state.pageNumber;
             state.paymentList.push(item);
           }
+        } else if (pageItems.length < state.paginationSize) {
+          const itemSet = new Set();
+          for (let item of pageData) {
+            itemSet.add(item);
+          }
+          state.categoryList = Array.from(itemSet);
+        } else if (pageItems.length === state.paginationSize) {
+          Vue.set(state.paymentList,)
+          state.paymentList = pageItems;
         }
       }
     },

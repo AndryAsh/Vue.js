@@ -15,7 +15,7 @@ const routes = [
     path: '/page/:id',
     name: 'currentPage',
     component: HomeView,
-    /* props: true, */
+    props: true,
   },
   //{
   //  path: '/about',
