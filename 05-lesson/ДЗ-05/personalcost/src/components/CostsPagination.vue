@@ -1,4 +1,5 @@
 <template>
+  <!-- <div> -->
   <div class="costs__pagination" @click="onClickPagination($event)">
     <button
       :disabled="currentPage == 1"
@@ -28,6 +29,17 @@
       &rang;
     </button>
   </div>
+  <!-- <div class="costs-buttons">
+      <button
+        class="costs-buttons__template"
+        @click="$router.push('/newcost/payment/Food/200/true')"
+      >
+        Food 200
+      </button>
+      <button class="costs-buttons__template">Transport 50</button>
+      <button class="costs-buttons__template">Entertainment 2000</button>
+    </div> -->
+  <!-- </div> -->
 </template>
 
 <script>

@@ -5,9 +5,11 @@
         <div class="costs">
           <new-cost
             :categoryList="getCategoryList"
+            :costData="costData"
             @addNewPayment="addNewPayment"
             @addNewCategory="addNewCategory"
           />
+
           <costs-table :costs="paginatedData" />
           <costs-pagination
             :pages="pageList"
@@ -16,6 +18,28 @@
             @nextPage="nextPage"
             @changePage="changePage"
           />
+
+          <div class="costs-buttons" @click="onCostButton($event)">
+            <button id="Food200" class="costs-buttons__template">
+              Food 200
+            </button>
+            <button id="Transport50" class="costs-buttons__template">
+              Transport 50
+            </button>
+            <button id="Entertainment2000" class="costs-buttons__template">
+              Entertainment 2000
+            </button>
+          </div>
+
+          <div class="costs-buttons" @click="onCostButton($event)">
+            <button id="Food" class="costs-buttons__template">Food</button>
+            <button id="Transport" class="costs-buttons__template">
+              Transport
+            </button>
+            <button id="Entertainment" class="costs-buttons__template">
+              Entertainment
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -33,6 +57,7 @@ export default {
   data() {
     return {
       currentPage: "", // текущий элемент пагинации
+      costData: null, // данные для передачи в компонент NewCostS
     };
   },
   methods: {
@@ -44,16 +69,6 @@ export default {
       "fetchCategoryData",
     ]),
     ...mapMutations(["setPaymentListData", "addCategory"]),
-    fetchCosts() {
-      return [
-        { id: 1, date: "28.02.2022", category: "food", value: 169 },
-        { id: 2, date: "28.02.2022", category: "food", value: 169 },
-        { id: 3, date: "28.02.2022", category: "food", value: 169 },
-        { id: 4, date: "28.02.2022", category: "food", value: 169 },
-        { id: 5, date: "28.02.2022", category: "food", value: 169 },
-        { id: 6, date: "28.02.2022", category: "food", value: 169 },
-      ];
-    },
     addNewPayment(data) {
       this.addNewItemFullDataList(data);
     },
@@ -89,6 +104,17 @@ export default {
         name: "currentPage",
         params: { id: pageNum },
       });
+    },
+    onCostButton(event) {
+      const routes = {
+        Food200: "/newcost/payment/Food/200/true",
+        Transport50: "/newcost/payment/Transport/50/true",
+        Entertainment2000: "/newcost/payment/Entertainment/2000/true",
+        Food: "/newcost/payment/Food/true",
+        Transport: "/newcost/payment/Transport/true",
+        Entertainment: "/newcost/payment/Entertainment/true",
+      };
+      this.$router.push(routes[event.target.id]);
     },
   },
   computed: {
@@ -134,21 +160,27 @@ export default {
     NewCost,
     CostsPagination,
   },
+  watch: {
+    $route(to) {
+      // обрабатываем изменение параметров маршрута...
+      if (to.name === "newCost" || to.name === "newCostFull") {
+        this.costData = to.params;
+      }
+    },
+  },
   async created() {
     /* debugger; */
     if (!this.getDataListSize) {
       await this.fetchFullData();
       await this.fetchCategoryData();
     }
-    /* if (!this.getPaymentsListSize) { */
     this.fetchData();
-    /* } */
-    /* this.$router.push({ name: "home" }); */
     this.currentPage = this.selectPaginationPage;
   },
   mounted() {
     /* debugger; */
   },
+  updated() {},
   beforeDestroy() {
     this.currentPage = "";
     delete this.currentPage;

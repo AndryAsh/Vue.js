@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+/* import NewCost from '../components/NewCost.vue' */
 
 Vue.use(VueRouter)
 
@@ -14,6 +15,18 @@ const routes = [
   {
     path: '/page/:id',
     name: 'currentPage',
+    component: HomeView,
+    props: true,
+  },
+  {
+    path: '/newcost/payment/:category/:show',
+    name: 'newCost',
+    component: HomeView,
+    props: true,
+  },
+  {
+    path: '/newcost/payment/:category/:value/:show',
+    name: 'newCostFull',
     component: HomeView,
     props: true,
   },
@@ -32,5 +45,18 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+// Предотвращение возникновения ошибки избыточной маршрутизации.
+// keep original function
+const _push = router.__proto__.push
+
+// then override it
+router.__proto__.push = function push(...args) {
+  return _push.call(this, ...args)
+    .catch(error => {
+      // avoid NavigationDuplicated
+      if (error.name !== 'NavigationDuplicated') throw error
+    })
+}
 
 export default router

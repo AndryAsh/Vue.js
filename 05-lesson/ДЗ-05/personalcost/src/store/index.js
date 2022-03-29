@@ -117,7 +117,7 @@ export default new Vuex.Store({
         for (let item of Object.values(this.state.fullDataList)) {
           item.forEach(el => category.add(el.category));
         }
-        category = [...category];
+        category = [...Array.from(category)];
         resolve(category)
       }).then(result => {
         commit('setCategoryList', result)

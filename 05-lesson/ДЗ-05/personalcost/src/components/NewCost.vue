@@ -1,59 +1,71 @@
 <template>
-  <div class="costs__add">
-    <button @click="clickedAddCost()" class="costs__add-button">
-      {{ showFormNewCost ? txtBtnClose : txtBtnAdd }}
-    </button>
-    <button @click="onCategoryClick()" class="costs__add-button">
-      {{ showFormNewCategory ? txtBtnClose : "add category" }}
-    </button>
-    <form action="!#" v-show="showFormNewCost" class="costs__add-form">
-      <label for="cost-description">Описание платежа</label>
-      <select
-        v-model="descriptionCost"
-        id="cost-description"
-        class="costs__add-form__select"
-        type="text"
-      >
-        <option v-for="(item, index) in categoryList" :key="index">
-          {{ item }}
-        </option>
-      </select>
-      <label for="cost-date">Дата платежа</label>
-      <input
-        v-model="dateCost"
-        id="cost-date"
-        class="costs__add-form__input"
-        type="date"
-      />
-      <label for="cost-amount">Сумма платежа</label>
-      <input
-        v-model="amountCost"
-        id="cost-amount"
-        class="costs__add-form__input"
-        type="number"
-      />
-      <button
-        @click.stop.prevent="onSaveClick()"
-        class="costs__add-button add-form-button"
-      >
-        add cost
+  <div>
+    <div class="costs__add">
+      <button @click="clickedAddCost()" class="costs__add-button">
+        {{ showFormNewCost ? txtBtnClose : txtBtnAdd }}
       </button>
-    </form>
-    <form action="!#" v-show="showFormNewCategory" class="costs__add-form">
-      <label for="cost-description">Название новой категории</label>
-      <input
-        v-model="newCategory"
-        id="cost-description"
-        class="costs__add-form__input"
-        type="text"
-      />
-      <button
-        @click.stop.prevent="onSaveCategory()"
-        class="costs__add-button add-form-button"
-      >
-        add category
+      <button @click="onCategoryClick()" class="costs__add-button">
+        {{ showFormNewCategory ? txtBtnClose : "add category" }}
       </button>
-    </form>
+      <form
+        v-show="showFormNewCost"
+        class="costs__add-form"
+        @submit.prevent="onSaveClick()"
+      >
+        <label for="cost-description">Описание платежа</label>
+        <select
+          v-model="descriptionCost"
+          id="cost-description"
+          class="costs__add-form__select"
+          required
+        >
+          <option v-for="(item, index) in categoryList" :key="index">
+            {{ item }}
+          </option>
+        </select>
+        <label for="cost-date">Дата платежа</label>
+        <input
+          v-model="dateCost"
+          id="cost-date"
+          class="costs__add-form__input"
+          type="date"
+          required
+        />
+        <label for="cost-amount">Сумма платежа</label>
+        <input
+          v-model="amountCost"
+          id="cost-amount"
+          class="costs__add-form__input"
+          type="number"
+          required
+        />
+        <input
+          class="costs__add-button add-form-button"
+          type="submit"
+          value="add cost"
+        />
+      </form>
+      <form
+        id="addCategoryForm"
+        v-show="showFormNewCategory"
+        class="costs__add-form"
+        @submit.prevent="onSaveCategory($event)"
+      >
+        <label for="cost-description">Название новой категории</label>
+        <input
+          v-model="newCategory"
+          id="cost-description"
+          class="costs__add-form__input"
+          type="text"
+          required
+        />
+        <input
+          class="costs__add-button add-form-button"
+          type="submit"
+          value="add category"
+        />
+      </form>
+    </div>
   </div>
 </template>
 
@@ -63,19 +75,23 @@ export default {
   props: {
     categoryList: {
       type: Array,
-      /* default: () => [], */
+      default: () => [],
+    },
+    costData: {
+      type: Object,
+      default: () => null,
     },
   },
   data() {
     return {
-      descriptionCost: "",
-      dateCost: "",
-      amountCost: "",
+      descriptionCost: null,
+      dateCost: null,
+      amountCost: null,
       showNewCost: false,
       showNewCategory: false,
       txtBtnAdd: "add new cost",
       txtBtnClose: "close form",
-      newCategory: "",
+      newCategory: null,
     };
   },
   computed: {
@@ -86,9 +102,44 @@ export default {
       return this.showNewCategory;
     },
   },
+  watch: {
+    descriptionCost: function (newValue) {
+      if (!newValue) {
+        this.descriptionCost = this.categoryList[0];
+      }
+    },
+    dateCost: function (newValue) {
+      if (!newValue) {
+        this.dateCost = new Date().toISOString().slice(0, 10);
+      }
+    },
+    costData: function (newValue) {
+      // Если все данные есть
+      if (newValue.category && newValue.value && this.dateCost) {
+        this.descriptionCost = newValue.category;
+        this.amountCost = newValue.value;
+
+        // Создаем запись автоматически, не открывая формы
+        this.onSaveClick();
+        // Возвращаемся в HomeView
+        this.$router.push("/");
+        // Если какие-то данные отсутствуют, открываем форму, заполняем и ждем
+      } else {
+        this.descriptionCost = newValue.category;
+        this.amountCost = newValue.value;
+        this.showNewCost = Boolean(newValue.show);
+      }
+    },
+  },
   methods: {
     clickedAddCost() {
       this.showNewCost = !this.showNewCost;
+
+      this.descriptionCost = null;
+      this.dateCost = null;
+      this.amountCost = null;
+
+      this.$router.push("/");
     },
     onCategoryClick() {
       this.showNewCategory = !this.showNewCategory;
@@ -111,21 +162,34 @@ export default {
         value: this.amountCost,
       };
       this.$emit("addNewPayment", data);
+
+      this.descriptionCost = null;
+      this.dateCost = null;
+      this.amountCost = null;
+
+      if (this.$route.params.name === "newCost") {
+        this.$router.push("/");
+      }
+      this.showNewCost = false;
     },
-    onSaveCategory() {
+    onSaveCategory(/* event */) {
+      /* console.log(event.target.parentElement.id); */
       this.$emit("addNewCategory", this.newCategory);
-    },
-    nextPage() {
-      this.pageNumber++;
-    },
-    prevPage() {
-      this.pageNumber--;
+      this.newCategory = null;
     },
   },
-  /* mounted() {
-    console.log(this.categoryList);
-    this.descriptionCost = this.categoryList[0];
-    //this.dateCost = Date.now();
+  /* created() {
+    const paramsRoute = this.$route.params;
+    this.showNewCost = Boolean(paramsRoute.show);
+    this.descriptionCost = paramsRoute.category;
+    this.amountCost = paramsRoute.value;
+    //console.log(this.$route.params);
+    //{category: 'Food', value: '200', show: 'true'}
   }, */
+  mounted() {
+    /* console.log(this.$route.params); */
+    this.descriptionCost = "";
+    this.dateCost = "" /* new Date().toLocaleDateString() */;
+  },
 };
 </script>

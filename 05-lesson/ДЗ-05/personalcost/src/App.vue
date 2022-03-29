@@ -62,8 +62,9 @@ a {
     gap: 2%;
     position: relative;
   }
-  &__add-button {
-    width: 20%;
+  &__add-button,
+  .costs-buttons__template {
+    width: 30%;
     height: 3rem;
     text-align: center;
     text-transform: uppercase;
@@ -156,6 +157,11 @@ a {
 }
 .val {
   text-align: end;
+}
+.costs-buttons {
+  display: flex;
+  margin: 1rem 0 0 0;
+  justify-content: space-between;
 }
 /* nav {
   padding: 30px;
