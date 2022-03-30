@@ -106,6 +106,8 @@ export default {
     descriptionCost: function (newValue) {
       if (!newValue) {
         this.descriptionCost = this.categoryList[0];
+      } else {
+        this.descriptionCost = newValue;
       }
     },
     dateCost: function (newValue) {

@@ -83,7 +83,7 @@ export default new Vuex.Store({
     fetchFullData({ commit }) {
       return new Promise((resolve) => {
         const obj = {};
-        const cat = ["Food", "Navigation", "Sport", "Entertaiment", "Education"];
+        const cat = ["Food", "Navigation", "Sport", "Entertaiment", "Education", "Transport"];
         for (let i = 1; i <= 10; i++) {
           const arr = [];
           for (let j = 1; j <= this.state.paginationSize; j++) {
@@ -93,7 +93,7 @@ export default new Vuex.Store({
                 return v.toString(16);
               }),
               date: "28.02.2022",
-              category: cat[Math.floor(Math.random() * (this.state.paginationSize - 1)) + 1],
+              category: cat[Math.floor(Math.random() * (cat.length - 1)) + 1],
               value: 169
             });
             obj[i] = arr;

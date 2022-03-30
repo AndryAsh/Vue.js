@@ -19,24 +19,44 @@
             @changePage="changePage"
           />
 
-          <div class="costs-buttons" @click="onCostButton($event)">
-            <button id="Food200" class="costs-buttons__template">
+          <div class="costs-buttons">
+            <button
+              @click="onCostButton('/newcost/payment/Food/200/true')"
+              class="costs-buttons__template"
+            >
               Food 200
             </button>
-            <button id="Transport50" class="costs-buttons__template">
+            <button
+              @click="onCostButton('/newcost/payment/Transport/50/true')"
+              class="costs-buttons__template"
+            >
               Transport 50
             </button>
-            <button id="Entertainment2000" class="costs-buttons__template">
+            <button
+              @click="onCostButton('/newcost/payment/Entertainment/2000/true')"
+              class="costs-buttons__template"
+            >
               Entertainment 2000
             </button>
           </div>
 
-          <div class="costs-buttons" @click="onCostButton($event)">
-            <button id="Food" class="costs-buttons__template">Food</button>
-            <button id="Transport" class="costs-buttons__template">
+          <div class="costs-buttons">
+            <button
+              @click="onCostButton('/newcost/payment/Food/true')"
+              class="costs-buttons__template"
+            >
+              Food
+            </button>
+            <button
+              @click="onCostButton('/newcost/payment/Transport/true')"
+              class="costs-buttons__template"
+            >
               Transport
             </button>
-            <button id="Entertainment" class="costs-buttons__template">
+            <button
+              @click="onCostButton('/newcost/payment/Entertainment/true')"
+              class="costs-buttons__template"
+            >
               Entertainment
             </button>
           </div>
@@ -105,16 +125,8 @@ export default {
         params: { id: pageNum },
       });
     },
-    onCostButton(event) {
-      const routes = {
-        Food200: "/newcost/payment/Food/200/true",
-        Transport50: "/newcost/payment/Transport/50/true",
-        Entertainment2000: "/newcost/payment/Entertainment/2000/true",
-        Food: "/newcost/payment/Food/true",
-        Transport: "/newcost/payment/Transport/true",
-        Entertainment: "/newcost/payment/Entertainment/true",
-      };
-      this.$router.push(routes[event.target.id]);
+    onCostButton(query) {
+      this.$router.push(query);
     },
   },
   computed: {
