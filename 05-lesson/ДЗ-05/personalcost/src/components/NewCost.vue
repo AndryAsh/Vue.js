@@ -174,24 +174,14 @@ export default {
       }
       this.showNewCost = false;
     },
-    onSaveCategory(/* event */) {
-      /* console.log(event.target.parentElement.id); */
+    onSaveCategory() {
       this.$emit("addNewCategory", this.newCategory);
       this.newCategory = null;
     },
   },
-  /* created() {
-    const paramsRoute = this.$route.params;
-    this.showNewCost = Boolean(paramsRoute.show);
-    this.descriptionCost = paramsRoute.category;
-    this.amountCost = paramsRoute.value;
-    //console.log(this.$route.params);
-    //{category: 'Food', value: '200', show: 'true'}
-  }, */
   mounted() {
-    /* console.log(this.$route.params); */
     this.descriptionCost = "";
-    this.dateCost = "" /* new Date().toLocaleDateString() */;
+    this.dateCost = "";
   },
 };
 </script>

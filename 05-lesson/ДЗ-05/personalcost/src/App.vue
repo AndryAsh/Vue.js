@@ -2,7 +2,9 @@
   <div id="app">
     <div class="container">
       <header class="page-header">
-        <span class="page-header__title">my personal costs</span>
+        <span class="page-header__title">
+          <router-link to="/">my personal costs</router-link></span
+        >
       </header>
       <router-view></router-view>
     </div>
@@ -164,15 +166,15 @@ a {
   justify-content: space-between;
 }
 /* nav {
-  padding: 30px;
+  padding: 30px; */
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+a {
+  font-weight: bold;
+  color: #2c3e50;
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+  &.router-link-exact-active {
+    color: $dark-grey;
   }
-} */
+}
+/* } */
 </style>

@@ -29,29 +29,34 @@
       &rang;
     </button>
   </div>
-  <!-- <div class="costs-buttons">
-      <button
-        class="costs-buttons__template"
-        @click="$router.push('/newcost/payment/Food/200/true')"
-      >
-        Food 200
-      </button>
-      <button class="costs-buttons__template">Transport 50</button>
-      <button class="costs-buttons__template">Entertainment 2000</button>
-    </div> -->
-  <!-- </div> -->
 </template>
 
 <script>
 export default {
   name: "CostsPagination",
   props: {
-    pages: {
+    dataListSize: {
+      type: Number,
+    },
+    paginationSize: {
+      type: Number,
+    },
+    /* pages: {
       type: Array,
       required: true,
-    },
+    }, */
     currentPage: {
       type: Number,
+    },
+  },
+  computed: {
+    pages() {
+      const lst = [];
+      /* const size = Math.ceil(this.dataListSize / this.paginationSize); */
+      for (let i = 1; i <= this.dataListSize; i++) {
+        lst.push(i);
+      }
+      return lst;
     },
   },
   methods: {

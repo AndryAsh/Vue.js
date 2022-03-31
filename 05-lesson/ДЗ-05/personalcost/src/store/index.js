@@ -8,7 +8,6 @@ export default new Vuex.Store({
     paymentList: [],
     fullDataList: [],
     categoryList: [],
-    pageNumber: 1,
     paginationSize: 5,
   },
   getters: {
@@ -18,47 +17,15 @@ export default new Vuex.Store({
       return state.paymentList.reduce((res, el) => res + Number(el.value), 0);
     },
     getDataListSize: state => Object.keys(state.fullDataList).length,
-    getPageNumber: state => state.pageNumber,
     getPaginationSize: state => state.paginationSize,
-    getPageData: state => state.paymentList.filter(function (item) {
-      return item.page == state.pageNumber;
-    }),
     getCategoryList: state => state.categoryList,
   },
   mutations: {
-    setPaymentListData(state, pNumber) {
-      const pageData = Array.from(state.fullDataList[pNumber]);
-      if (!state.paymentList.length) {
-        for (let item of pageData) {
-          item['page'] = pNumber;
-          state.paymentList.push(item);
-        }
-      } else {
-        const pageItems = state.paymentList.filter(function (item) {
-          return item.page == state.pageNumber;
-        });
-        if (!pageItems.length) {
-          for (let item of pageData) {
-            item['page'] = state.pageNumber;
-            state.paymentList.push(item);
-          }
-        } else if (pageItems.length < state.paginationSize) {
-          const itemSet = new Set();
-          for (let item of pageData) {
-            itemSet.add(item);
-          }
-          state.categoryList = Array.from(itemSet);
-        } else if (pageItems.length === state.paginationSize) {
-          Vue.set(state.paymentList,)
-          state.paymentList = pageItems;
-        }
-      }
+    setPaymentListData(state, payload) {
+      state.paymentList = [...state.fullDataList[payload]];
     },
     setFullDataList(state, payload) {
       state.fullDataList = payload;
-    },
-    setPageNumber(state, payload) {
-      state.pageNumber = payload;
     },
     addNewItem(state, payload) {
       let endPage = Object.keys(state.fullDataList).length;
@@ -77,8 +44,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    fetchData({ commit }) {
-      commit('setPaymentListData', this.state.pageNumber)
+    fetchData({ commit }, payload) {
+      commit('setPaymentListData', payload)
     },
     fetchFullData({ commit }) {
       return new Promise((resolve) => {
@@ -103,10 +70,6 @@ export default new Vuex.Store({
       }).then(result => {
         commit('setFullDataList', result)
       })
-    },
-    changePageNumber({ commit }, payload) {
-      commit('setPageNumber', payload);
-      commit('setPaymentListData', this.state.pageNumber);
     },
     addNewItemFullDataList({ commit }, payload) {
       commit('addNewItem', payload);

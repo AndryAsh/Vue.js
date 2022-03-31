@@ -10,10 +10,12 @@
             @addNewCategory="addNewCategory"
           />
 
-          <costs-table :costs="paginatedData" />
+          <!-- <costs-table :costs="paginatedData" /> -->
+          <costs-table :costs="paymentsList" />
           <costs-pagination
-            :pages="pageList"
+            :dataListSize="getDataListSize"
             :currentPage="pageNumber"
+            :paginationSize="getPaginationSize"
             @prevPage="prevPage"
             @nextPage="nextPage"
             @changePage="changePage"
@@ -21,19 +23,38 @@
 
           <div class="costs-buttons">
             <button
-              @click="onCostButton('/newcost/payment/Food/200/true')"
+              @click="
+                onCostButton({
+                  name: 'newCostFull',
+                  params: { category: 'Food', value: 200, show: true },
+                })
+              "
               class="costs-buttons__template"
             >
               Food 200
             </button>
             <button
-              @click="onCostButton('/newcost/payment/Transport/50/true')"
+              @click="
+                onCostButton({
+                  name: 'newCostFull',
+                  params: { category: 'Transport', value: 50, show: true },
+                })
+              "
               class="costs-buttons__template"
             >
               Transport 50
             </button>
             <button
-              @click="onCostButton('/newcost/payment/Entertainment/2000/true')"
+              @click="
+                onCostButton({
+                  name: 'newCostFull',
+                  params: {
+                    category: 'Entertainment',
+                    value: 2000,
+                    show: true,
+                  },
+                })
+              "
               class="costs-buttons__template"
             >
               Entertainment 2000
@@ -42,19 +63,34 @@
 
           <div class="costs-buttons">
             <button
-              @click="onCostButton('/newcost/payment/Food/true')"
+              @click="
+                onCostButton({
+                  name: 'newCost',
+                  params: { category: 'Food', show: true },
+                })
+              "
               class="costs-buttons__template"
             >
               Food
             </button>
             <button
-              @click="onCostButton('/newcost/payment/Transport/true')"
+              @click="
+                onCostButton({
+                  name: 'newCost',
+                  params: { category: 'Transport', show: true },
+                })
+              "
               class="costs-buttons__template"
             >
               Transport
             </button>
             <button
-              @click="onCostButton('/newcost/payment/Entertainment/true')"
+              @click="
+                onCostButton({
+                  name: 'newCost',
+                  params: { category: 'Entertainment', show: true },
+                })
+              "
               class="costs-buttons__template"
             >
               Entertainment
@@ -76,19 +112,19 @@ export default {
   name: "app",
   data() {
     return {
-      currentPage: "", // текущий элемент пагинации
-      costData: null, // данные для передачи в компонент NewCostS
+      currentPage: null,
+      pageNumber: 1,
+      costData: null, // данные для передачи в компонент NewCosts
     };
   },
   methods: {
     ...mapActions([
       "fetchData",
       "fetchFullData",
-      "changePageNumber",
       "addNewItemFullDataList",
       "fetchCategoryData",
     ]),
-    ...mapMutations(["setPaymentListData", "addCategory"]),
+    ...mapMutations(["addCategory"]),
     addNewPayment(data) {
       this.addNewItemFullDataList(data);
     },
@@ -96,20 +132,22 @@ export default {
       this.addCategory(payload);
     },
     prevPage() {
-      const pageNum = this.getPageNumber - 1;
+      const pageNum = this.pageNumber - 1;
       this.currentPage.classList.remove("selected");
-      this.changePageNumber(pageNum);
+      this.pageNumber = pageNum;
       this.currentPage = this.selectPaginationPage;
+      this.fetchData(pageNum);
       this.$router.push({
         name: "currentPage",
         params: { id: pageNum },
       });
     },
     nextPage() {
-      const pageNum = this.getPageNumber + 1;
+      const pageNum = this.pageNumber + 1;
       this.currentPage.classList.remove("selected");
-      this.changePageNumber(pageNum);
+      this.pageNumber = pageNum;
       this.currentPage = this.selectPaginationPage;
+      this.fetchData(pageNum);
       this.$router.push({
         name: "currentPage",
         params: { id: pageNum },
@@ -117,38 +155,51 @@ export default {
     },
     changePage(newPage) {
       const pageNum = Number(newPage.dataset.id);
-      this.currentPage.classList.remove("selected");
-      this.changePageNumber(pageNum);
-      this.currentPage = this.selectPaginationPage;
-      this.$router.push({
-        name: "currentPage",
-        params: { id: pageNum },
-      });
+      if (pageNum !== Number(this.currentPage.dataset.id)) {
+        this.currentPage.classList.remove("selected");
+        this.pageNumber = pageNum;
+        this.currentPage = this.selectPaginationPage;
+        this.fetchData(pageNum);
+        this.$router.push({
+          name: "currentPage",
+          params: { id: pageNum },
+        });
+      }
     },
     onCostButton(query) {
+      if (!this.getCategoryList.includes(query.params.category)) {
+        this.addNewCategory(query.params.category);
+      }
       this.$router.push(query);
     },
   },
   computed: {
     ...mapGetters([
-      "getPaymentsList",
+      /* "getPaymentsList", */
       "getPaymentsListSize",
-      "getFullPaymentsValue",
+      /* "getFullPaymentsValue", */
       "getDataListSize",
-      "getPageNumber",
-      "getPageData",
       "getCategoryList",
+      "getPaginationSize",
+      "getPaymentsList",
     ]),
-    getFPV() {
-      /* return this.$store.getters.getFullPaymentsValue; */
+    // Количество строк на странице
+    paginationSize() {
+      return this.getPaginationSize;
+    },
+    paymentsList() {
+      return this.getPaymentsList;
+    },
+    /* getFPV() {
+      // return this.$store.getters.getFullPaymentsValue;
       return this.getFullPaymentsValue;
-    },
-    pageNumber() {
+    }, */
+    /* pageNumber() {
       return this.getPageNumber;
-    },
-    paginatedData() {
+    }, */
+    /* paginatedData() {
       return this.getPageData;
-    },
+    }, */
     pageList() {
       const lst = [];
       for (let i = 1; i <= this.getDataListSize; i++) {
@@ -186,7 +237,7 @@ export default {
       await this.fetchFullData();
       await this.fetchCategoryData();
     }
-    this.fetchData();
+    this.fetchData(this.pageNumber);
     this.currentPage = this.selectPaginationPage;
   },
   mounted() {
