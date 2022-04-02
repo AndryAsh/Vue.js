@@ -3,8 +3,8 @@
     <div class="container">
       <header class="page-header">
         <span class="page-header__title">
-          <router-link to="/">my personal costs</router-link></span
-        >
+          <router-link to="/">my personal costs</router-link>
+        </span>
       </header>
       <router-view></router-view>
     </div>

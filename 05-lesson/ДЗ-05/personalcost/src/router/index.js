@@ -29,14 +29,14 @@ const routes = [
     component: HomeView,
     props: true,
   },
-  //{
-  //  path: '/about',
-  //  name: 'about',
-  // route level code-splitting
-  // this generates a separate chunk (about.[hash].js) for this route
-  // which is lazy-loaded when the route is visited.
-  //  component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  //  }
+  {
+    path: '/about',
+    name: 'about',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+  }
 ]
 
 const router = new VueRouter({
@@ -47,7 +47,7 @@ const router = new VueRouter({
 
 // Предотвращение возникновения ошибки избыточной маршрутизации.
 // keep original function
-const _push = router.__proto__.push
+/* const _push = router.__proto__.push
 
 // then override it
 router.__proto__.push = function push(...args) {
@@ -56,6 +56,6 @@ router.__proto__.push = function push(...args) {
       // avoid NavigationDuplicated
       if (error.name !== 'NavigationDuplicated') throw error
     })
-}
+} */
 
 export default router

@@ -239,6 +239,10 @@ export default {
     }
     this.fetchData(this.pageNumber);
     this.currentPage = this.selectPaginationPage;
+    /* if (this.$route.name === "currentPage") {
+      this.pageNumber = Number(this.$route.params.id);
+      this.currentPage.classList.remove("selected");
+    } */
   },
   mounted() {
     /* debugger; */
