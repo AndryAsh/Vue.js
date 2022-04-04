@@ -1,83 +1,59 @@
 <template>
-  <div>
-    <div class="costs__add">
-      <button @click="clickedAddCost()" class="costs__add-button">
-        {{ showFormNewCost ? txtBtnClose : txtBtnAdd }}
-      </button>
-      <button @click="onCategoryClick()" class="costs__add-button">
-        {{ showFormNewCategory ? txtBtnClose : "add category" }}
-      </button>
-      <form
-        v-show="showFormNewCost"
-        class="costs__add-form"
-        @submit.prevent="onSaveClick()"
-      >
-        <label for="cost-description">Описание платежа</label>
-        <select
-          v-model="descriptionCost"
-          id="cost-description"
-          class="costs__add-form__select"
-          required
-        >
-          <option v-for="(item, index) in categoryList" :key="index">
-            {{ item }}
-          </option>
-        </select>
-        <label for="cost-date">Дата платежа</label>
-        <input
-          v-model="dateCost"
-          id="cost-date"
-          class="costs__add-form__input"
-          type="date"
-          required
-        />
-        <label for="cost-amount">Сумма платежа</label>
-        <input
-          v-model="amountCost"
-          id="cost-amount"
-          class="costs__add-form__input"
-          type="number"
-          required
-        />
-        <input
-          class="costs__add-button add-form-button"
-          type="submit"
-          value="add cost"
-        />
-      </form>
-      <form
-        id="addCategoryForm"
-        v-show="showFormNewCategory"
-        class="costs__add-form"
-        @submit.prevent="onSaveCategory($event)"
-      >
-        <label for="cost-description">Название новой категории</label>
-        <input
-          v-model="newCategory"
-          id="cost-description"
-          class="costs__add-form__input"
-          type="text"
-          required
-        />
-        <input
-          class="costs__add-button add-form-button"
-          type="submit"
-          value="add category"
-        />
-      </form>
-    </div>
-  </div>
+  <form
+    v-if="showFormNewCost"
+    class="costs__add-form"
+    @submit.prevent="onSaveClick()"
+  >
+    <label for="cost-description">Описание платежа</label>
+    <select
+      v-model="descriptionCost"
+      id="cost-description"
+      class="costs__add-form__select"
+      required
+    >
+      <option v-for="(item, index) in categoryList" :key="index">
+        {{ item }}
+      </option>
+    </select>
+    <label for="cost-date">Дата платежа</label>
+    <input
+      v-model="dateCost"
+      id="cost-date"
+      class="costs__add-form__input"
+      type="date"
+      required
+    />
+    <label for="cost-amount">Сумма платежа</label>
+    <input
+      v-model="amountCost"
+      id="cost-amount"
+      class="costs__add-form__input"
+      type="number"
+      required
+    />
+    <input
+      class="costs__add-button add-form-button"
+      type="submit"
+      value="add cost"
+    />
+  </form>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "NewCost",
   props: {
-    categoryList: {
-      type: Array,
-      default: () => [],
+    showNewCost: {
+      type: Boolean,
+      default: () => false,
     },
     costData: {
+      type: Object,
+      default: () => null,
+    },
+    costManage: {
       type: Object,
       default: () => null,
     },
@@ -87,19 +63,15 @@ export default {
       descriptionCost: null,
       dateCost: null,
       amountCost: null,
-      showNewCost: false,
-      showNewCategory: false,
-      txtBtnAdd: "add new cost",
-      txtBtnClose: "close form",
-      newCategory: null,
     };
   },
   computed: {
+    ...mapGetters(["getCategoryList"]),
+    categoryList() {
+      return this.getCategoryList;
+    },
     showFormNewCost() {
       return this.showNewCost;
-    },
-    showFormNewCategory() {
-      return this.showNewCategory;
     },
   },
   watch: {
@@ -115,6 +87,11 @@ export default {
         this.dateCost = new Date().toISOString().slice(0, 10);
       }
     },
+    costManage: function (newValue) {
+      this.descriptionCost = newValue.descriptionCost;
+      this.dateCost = newValue.dateCost;
+      this.amountCost = newValue.amountCost;
+    },
     costData: function (newValue) {
       // Если все данные есть
       if (newValue.category && newValue.value && this.dateCost) {
@@ -129,23 +106,11 @@ export default {
       } else {
         this.descriptionCost = newValue.category;
         this.amountCost = newValue.value;
-        this.showNewCost = Boolean(newValue.show);
       }
     },
   },
   methods: {
-    clickedAddCost() {
-      this.showNewCost = !this.showNewCost;
-
-      this.descriptionCost = null;
-      this.dateCost = null;
-      this.amountCost = null;
-
-      this.$router.push("/");
-    },
-    onCategoryClick() {
-      this.showNewCategory = !this.showNewCategory;
-    },
+    ...mapActions(["fetchCategoryData"]),
     onSaveClick() {
       const d = this.dateCost.split("-");
       [d[0], d[2]] = [d[2], d[0]];
@@ -162,6 +127,7 @@ export default {
         date: dateCost,
         category: this.descriptionCost,
         value: this.amountCost,
+        showNewCost: false,
       };
       this.$emit("addNewPayment", data);
 
@@ -172,15 +138,17 @@ export default {
       if (this.$route.params.name === "newCost") {
         this.$router.push("/");
       }
-      this.showNewCost = false;
     },
     onSaveCategory() {
       this.$emit("addNewCategory", this.newCategory);
       this.newCategory = null;
     },
   },
-  mounted() {
-    this.descriptionCost = "";
+  async mounted() {
+    if (!this.categoryList.length) {
+      await this.fetchCategoryData();
+      this.descriptionCost = this.categoryList[0];
+    }
     this.dateCost = "";
   },
 };

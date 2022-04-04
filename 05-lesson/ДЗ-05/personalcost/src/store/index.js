@@ -76,6 +76,15 @@ export default new Vuex.Store({
     },
     fetchCategoryData({ commit }) {
       return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(["Food", "Navigation", "Sport", "Entertaiment", "Education", "Transport"])
+        }, 1000)
+      }).then(result => {
+        commit('setCategoryList', result)
+      })
+    },
+    /* fetchCategoryData({ commit }) {
+      return new Promise((resolve) => {
         let category = new Set();
         for (let item of Object.values(this.state.fullDataList)) {
           item.forEach(el => category.add(el.category));
@@ -85,7 +94,7 @@ export default new Vuex.Store({
       }).then(result => {
         commit('setCategoryList', result)
       })
-    }
+    } */
   },
   modules: {
   }

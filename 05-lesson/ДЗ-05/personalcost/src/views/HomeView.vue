@@ -3,15 +3,29 @@
     <main>
       <div class="content">
         <div class="costs">
-          <new-cost
-            :categoryList="getCategoryList"
-            :costData="costData"
-            @addNewPayment="addNewPayment"
-            @addNewCategory="addNewCategory"
-          />
+          <div class="costs__add">
+            <add-cost-button
+              :showNewCost="showNewCost"
+              @newCostManage="clickedAddCost"
+            />
+            <add-category-button
+              :showNewCategory="showNewCategory"
+              @newCategoryManage="clickedAddCategory"
+            />
+            <new-cost
+              :showNewCost="showNewCost"
+              :costManage="costManage"
+              :costData="costData"
+              @addNewPayment="addNewPayment"
+            />
+            <new-category
+              :showNewCategory="showNewCategory"
+              @addNewCategory="addNewCategory"
+            />
+          </div>
 
-          <!-- <costs-table :costs="paginatedData" /> -->
           <costs-table :costs="paymentsList" />
+
           <costs-pagination
             :dataListSize="getDataListSize"
             :currentPage="pageNumber"
@@ -108,6 +122,10 @@ import NewCost from "@/components/NewCost.vue";
 import CostsPagination from "@/components/CostsPagination.vue";
 import { mapMutations, mapGetters, mapActions } from "vuex";
 
+import AddCostButton from "@/components/AddCostButton.vue";
+import AddCategoryButton from "@/components/AddCategoryButton.vue";
+import NewCategory from "@/components/NewCategory.vue";
+
 export default {
   name: "app",
   data() {
@@ -115,17 +133,17 @@ export default {
       currentPage: null,
       pageNumber: 1,
       costData: null, // данные для передачи в компонент NewCosts
+      showNewCost: false,
+      showNewCategory: false,
+      costManage: null,
+      categoryManage: null,
     };
   },
   methods: {
-    ...mapActions([
-      "fetchData",
-      "fetchFullData",
-      "addNewItemFullDataList",
-      "fetchCategoryData",
-    ]),
+    ...mapActions(["fetchData", "fetchFullData", "addNewItemFullDataList"]),
     ...mapMutations(["addCategory"]),
     addNewPayment(data) {
+      this.showNewCost = data.showNewCost;
       this.addNewItemFullDataList(data);
     },
     addNewCategory(payload) {
@@ -170,14 +188,21 @@ export default {
       if (!this.getCategoryList.includes(query.params.category)) {
         this.addNewCategory(query.params.category);
       }
+      this.showNewCost = query.params.show;
       this.$router.push(query);
+    },
+    clickedAddCost(payment) {
+      this.showNewCost = payment.showNewCost;
+      this.costManage = payment;
+    },
+    clickedAddCategory(payment) {
+      this.showNewCategory = payment.showNewCategory;
+      this.categoryManage = payment;
     },
   },
   computed: {
     ...mapGetters([
-      /* "getPaymentsList", */
       "getPaymentsListSize",
-      /* "getFullPaymentsValue", */
       "getDataListSize",
       "getCategoryList",
       "getPaginationSize",
@@ -194,12 +219,6 @@ export default {
       // return this.$store.getters.getFullPaymentsValue;
       return this.getFullPaymentsValue;
     }, */
-    /* pageNumber() {
-      return this.getPageNumber;
-    }, */
-    /* paginatedData() {
-      return this.getPageData;
-    }, */
     pageList() {
       const lst = [];
       for (let i = 1; i <= this.getDataListSize; i++) {
@@ -215,13 +234,13 @@ export default {
       return el;
     },
   },
-  /* actions: {
-    ...mapActions(["fetchData"]),
-  }, */
   components: {
     CostsTable,
     NewCost,
+    NewCategory,
     CostsPagination,
+    AddCostButton,
+    AddCategoryButton,
   },
   watch: {
     $route(to) {
@@ -235,14 +254,9 @@ export default {
     /* debugger; */
     if (!this.getDataListSize) {
       await this.fetchFullData();
-      await this.fetchCategoryData();
     }
     this.fetchData(this.pageNumber);
     this.currentPage = this.selectPaginationPage;
-    /* if (this.$route.name === "currentPage") {
-      this.pageNumber = Number(this.$route.params.id);
-      this.currentPage.classList.remove("selected");
-    } */
   },
   mounted() {
     /* debugger; */
