@@ -27,14 +27,10 @@ export default {
   },
   methods: {
     clickedAddCost() {
-      /* this.showNewCost = !this.showNewCost; */
-      /* this.descriptionCost = null;
-      this.dateCost = null;
-      this.amountCost = null; */
       this.$emit("newCostManage", {
         showNewCost: !this.showNewCost,
-        /* descriptionCost: null,
-        dateCost: null, */
+        descriptionCost: null,
+        // dateCost: null,
         amountCost: null,
       });
       /* this.$router.push("/"); */

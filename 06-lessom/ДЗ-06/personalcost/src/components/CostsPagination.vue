@@ -10,19 +10,19 @@
     </button>
     <a
       href="#"
-      v-for="(page, index) in pages"
+      v-for="page in amountPages"
       :class="
-        index === 0
+        page === 1
           ? 'costs__pagination__page selected'
           : 'costs__pagination__page'
       "
-      :key="index"
+      :key="page"
       :data-id="page"
     >
       {{ page }}
     </a>
     <button
-      :disabled="currentPage == pages.length"
+      :disabled="currentPage == amountPages"
       class="costs__pagination__button"
       data-id="next"
     >
@@ -41,23 +41,22 @@ export default {
     paginationSize: {
       type: Number,
     },
-    /* pages: {
-      type: Array,
-      required: true,
-    }, */
     currentPage: {
       type: Number,
     },
   },
   computed: {
-    pages() {
+    amountPages() {
+      return Math.ceil(this.dataListSize / this.paginationSize);
+    },
+    /* pages() {
       const lst = [];
-      /* const size = Math.ceil(this.dataListSize / this.paginationSize); */
+      // const size = Math.ceil(this.dataListSize / this.paginationSize);
       for (let i = 1; i <= this.dataListSize; i++) {
         lst.push(i);
       }
       return lst;
-    },
+    }, */
   },
   methods: {
     onClickPagination(event) {

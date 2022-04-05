@@ -1,7 +1,6 @@
 <template>
   <form
     id="addCategoryForm"
-    v-show="showNewCategory"
     class="costs__add-form"
     @submit.prevent="onSaveClick($event)"
   >
@@ -22,28 +21,33 @@
 </template>
 
 <script>
+import { mapMutations, mapGetters, mapActions } from "vuex";
+
 export default {
   name: "NewCategory",
   props: {
-    categoryList: {
-      type: Array,
-      default: () => [],
-    },
-    showNewCategory: {
-      type: Boolean,
-      default: () => false,
-    },
+    settings: Object,
   },
   data() {
     return {
       newCategory: null,
     };
   },
+  computed: {
+    ...mapGetters(["getCategoryList"]),
+  },
   methods: {
+    ...mapMutations(["addCategory"]),
+    ...mapActions(["fetchCategoryData"]),
     onSaveClick() {
-      this.$emit("addNewCategory", this.newCategory);
+      this.addCategory(this.newCategory);
       this.newCategory = null;
     },
+  },
+  async mounted() {
+    if (!this.getCategoryList.length) {
+      await this.fetchCategoryData();
+    }
   },
 };
 </script>

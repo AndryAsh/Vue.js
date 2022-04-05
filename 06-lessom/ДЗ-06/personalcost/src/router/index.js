@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+/* import HomeView from '../views/HomeView.vue' */
 
 Vue.use(VueRouter)
 
@@ -8,25 +8,26 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView,
+    /* component: HomeView, */
+    component: () => import(/* webpackChunkName: "HomeView" */ '@/views/HomeView.vue'),
     props: true,
   },
   {
     path: '/page/:id',
     name: 'currentPage',
-    component: HomeView,
+    component: () => import(/* webpackChunkName: "HomeView" */ '@/views/HomeView.vue'),
     props: true,
   },
   {
     path: '/newcost/payment/:category/:show',
     name: 'newCost',
-    component: HomeView,
+    component: () => import(/* webpackChunkName: "HomeView" */ '@/views/HomeView.vue'),
     props: true,
   },
   {
     path: '/newcost/payment/:category/:value/:show',
     name: 'newCostFull',
-    component: HomeView,
+    component: () => import(/* webpackChunkName: "HomeView" */ '@/views/HomeView.vue'),
     props: true,
   },
   {

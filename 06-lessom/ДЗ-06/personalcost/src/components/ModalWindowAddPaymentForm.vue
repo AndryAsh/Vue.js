@@ -1,27 +1,47 @@
 <template>
-  <div class="wrapper">
-    <div class="form-header">Add new Payment</div>
+  <div class="wrapper" v-if="settings.content">
+    <div class="form-header">{{ settings.title }}</div>
     <div class="form-content">
-      <NewCost />
+      <component :is="settings.content" :settings="settings" />
+      <!-- <new-cost v-if="settings.content === 'new-cost'" :settings="settings" /> -->
     </div>
     <div class="form-footer">
-      <!-- <button @click="onCloseClck">Close</button> -->
+      <!-- <button class="costs__add-button add-form-button" @click="onCloseClick()">
+        add cost
+      </button> -->
     </div>
   </div>
 </template>
 
 <script>
-import NewCost from "@/components/NewCost";
+/* import NewCost from "@/components/NewCost"; */
 
 export default {
   name: "ModalWindowAddPaymentForm",
   components: {
-    NewCost,
+    NewCost: () =>
+      import(/* webpackChunkName: "NewCost" */ "@/components/NewCost.vue"),
+    NewCategory: () =>
+      import(/* webpackChunkName: "NewCost" */ "@/components/NewCategory.vue"),
   },
   methods: {
     /* onCloseClick() {
       this.$emit("close");
     }, */
   },
+  props: {
+    settings: Object,
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.wrapper {
+  width: 15%;
+  padding: 1rem;
+  position: absolute;
+  top: 20%;
+  left: 6%;
+  background: #efefef;
+}
+</style>

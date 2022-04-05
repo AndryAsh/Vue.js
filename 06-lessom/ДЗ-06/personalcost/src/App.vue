@@ -24,8 +24,8 @@ $lihgt-grey: #dadada;
 $dark-grey: #696969;
 $green: #25a79a;
 $white: #ffffff;
- */
-/* body {
+
+body {
   margin: 0;
   padding: 0;
 }
@@ -82,7 +82,8 @@ a {
     position: absolute;
     box-sizing: border-box;
     width: 50%;
-    top: 3.5rem;
+    top: 4rem;
+    left: 0;
     padding: 2%;
     border: 1px solid $dark-grey;
     border-radius: 0.5rem;

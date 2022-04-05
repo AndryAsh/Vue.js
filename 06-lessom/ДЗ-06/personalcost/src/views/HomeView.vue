@@ -12,28 +12,14 @@
               :showNewCategory="showNewCategory"
               @newCategoryManage="clickedAddCategory"
             />
-            <modal-window-add-payment-form
-              v-if="showNewCost"
-              @addNewPayment="addNewPayment"
-            />
-            <!-- <new-cost
-              :showNewCost="showNewCost"
-              :costManage="costManage"
-              :costData="costData"
-              @addNewPayment="addNewPayment"
-            /> -->
-            <new-category
-              :showNewCategory="showNewCategory"
-              @addNewCategory="addNewCategory"
-            />
           </div>
 
-          <costs-table :costs="paymentsList" />
+          <costs-table :costs="currentElements" @selectedCost="selectedCost" />
 
           <costs-pagination
-            :dataListSize="getDataListSize"
+            :dataListSize="getPaymentsListSize"
             :currentPage="pageNumber"
-            :paginationSize="getPaginationSize"
+            :paginationSize="paginationSize"
             @prevPage="prevPage"
             @nextPage="nextPage"
             @changePage="changePage"
@@ -117,50 +103,46 @@
         </div>
       </div>
     </main>
+
+    <transition name="fade" key="Modal">
+      <modal-window-add-payment-form v-if="modalShown" :settings="settings" />
+      <modal-window-context-menu v-if="contextShown" :settings="settings" />
+    </transition>
   </div>
 </template>
 
 <script>
 import CostsTable from "@/components/CostsTable.vue";
-/* import NewCost from "@/components/NewCost.vue"; */
 import CostsPagination from "@/components/CostsPagination.vue";
-import { mapMutations, mapGetters, mapActions } from "vuex";
+
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 import AddCostButton from "@/components/AddCostButton.vue";
 import AddCategoryButton from "@/components/AddCategoryButton.vue";
-import NewCategory from "@/components/NewCategory.vue";
-
-import ModalWindowAddPaymentForm from "@/components/ModalWindowAddPaymentForm.vue";
 
 export default {
   name: "app",
   data() {
     return {
-      currentPage: null,
-      pageNumber: 1,
+      currentPage: null, //
+      pageNumber: 1, // Номер текущей страницы
+      paginationSize: 5, // Количество записей на странице
       costData: null, // данные для передачи в компонент NewCosts
       showNewCost: false,
       showNewCategory: false,
-      costManage: null,
       categoryManage: null,
+      modalShown: false, // Флаг управления модальным окном
+      contextShown: false,
     };
   },
   methods: {
-    ...mapActions(["fetchData", "fetchFullData", "addNewItemFullDataList"]),
-    ...mapMutations(["addCategory"]),
-    addNewPayment(data) {
-      this.showNewCost = data.showNewCost;
-      this.addNewItemFullDataList(data);
-    },
-    addNewCategory(payload) {
-      this.addCategory(payload);
-    },
+    ...mapActions(["fetchData"]),
+    ...mapMutations(["addCategory", "addDataPaymentsList"]),
     prevPage() {
       const pageNum = this.pageNumber - 1;
       this.currentPage.classList.remove("selected");
       this.pageNumber = pageNum;
       this.currentPage = this.selectPaginationPage;
-      this.fetchData(pageNum);
       this.$router.push({
         name: "currentPage",
         params: { id: pageNum },
@@ -171,7 +153,6 @@ export default {
       this.currentPage.classList.remove("selected");
       this.pageNumber = pageNum;
       this.currentPage = this.selectPaginationPage;
-      this.fetchData(pageNum);
       this.$router.push({
         name: "currentPage",
         params: { id: pageNum },
@@ -183,43 +164,103 @@ export default {
         this.currentPage.classList.remove("selected");
         this.pageNumber = pageNum;
         this.currentPage = this.selectPaginationPage;
-        this.fetchData(pageNum);
         this.$router.push({
           name: "currentPage",
           params: { id: pageNum },
         });
       }
     },
+    addNewCategory(payload) {
+      this.addCategory(payload);
+    },
     onCostButton(query) {
       if (!this.getCategoryList.includes(query.params.category)) {
         this.addNewCategory(query.params.category);
       }
       this.showNewCost = query.params.show;
-      this.$router.push(query);
+      if (this.showNewCost) {
+        this.$modal.show("NewCost", {
+          content: "new-cost",
+          title: "add new cost",
+          descriptionCost: query.params.category,
+          amountCost: query.params.value,
+          createCost: true,
+        });
+      }
     },
     clickedAddCost(payment) {
       this.showNewCost = payment.showNewCost;
-      this.costManage = payment;
+
+      // Вызов модального окна с формой
+      if (this.showNewCost) {
+        this.$modal.show("NewCost", {
+          content: "new-cost",
+          title: "add new cost",
+          descriptionCost: payment.descriptionCost,
+          amountCost: payment.amountCost,
+          createCost: true,
+        });
+      } else {
+        this.$modal.hide();
+      }
     },
     clickedAddCategory(payment) {
+      /* console.log(payment); */
       this.showNewCategory = payment.showNewCategory;
-      this.categoryManage = payment;
+      /* this.categoryManage = payment; */
+
+      // Вызов модального окна с формой
+      if (this.showNewCategory) {
+        this.$modal.show("NewCategory", {
+          content: "new-category",
+          title: "add new category",
+        });
+      } else {
+        this.$modal.hide();
+      }
+    },
+    onShow(settings) {
+      this.modalShown = true;
+      this.settings = settings;
+    },
+    onHide() {
+      this.modalShown = false;
+      this.settings = {};
+    },
+    onShowContextMenu(settings) {
+      this.contextShown = true;
+      this.settings = settings;
+    },
+    onHideContextMenu() {
+      this.contextShown = false;
+      this.settings = {};
+    },
+    selectedCost(payload) {
+      const costIndex = this.getPaymentsList.findIndex(
+        (el) => el.id === payload.id
+      );
+      this.$context.showContextMenu("ContextMenuTableCosts", {
+        content: "ContextMenuTableCosts",
+        index: costIndex,
+        uuid: payload.id,
+        position: payload.position,
+      });
     },
   },
   computed: {
     ...mapGetters([
       "getPaymentsListSize",
-      "getDataListSize",
       "getCategoryList",
-      "getPaginationSize",
       "getPaymentsList",
     ]),
-    // Количество строк на странице
-    paginationSize() {
-      return this.getPaginationSize;
-    },
     paymentsList() {
       return this.getPaymentsList;
+    },
+    currentElements() {
+      return this.paymentsList.slice(
+        this.paginationSize * (this.pageNumber - 1),
+        this.paginationSize * (this.pageNumber - 1) + this.paginationSize
+      );
     },
     /* getFPV() {
       // return this.$store.getters.getFullPaymentsValue;
@@ -242,12 +283,17 @@ export default {
   },
   components: {
     CostsTable,
-    /* NewCost, */
-    NewCategory,
     CostsPagination,
     AddCostButton,
     AddCategoryButton,
-    ModalWindowAddPaymentForm,
+    ModalWindowAddPaymentForm: () =>
+      import(
+        /* webpackChunkName: "ModalComponent" */ "@/components/ModalWindowAddPaymentForm.vue"
+      ),
+    ModalWindowContextMenu: () =>
+      import(
+        /* webpackChunkName: "ModalComponent" */ "@/components/ModalWindowContextMenu.vue"
+      ),
   },
   watch: {
     $route(to) {
@@ -259,19 +305,39 @@ export default {
   },
   async created() {
     /* debugger; */
-    if (!this.getDataListSize) {
-      await this.fetchFullData();
+    if (!this.getPaymentList) {
+      await this.fetchData();
     }
-    this.fetchData(this.pageNumber);
     this.currentPage = this.selectPaginationPage;
   },
   mounted() {
     /* debugger; */
+    this.$modal.EventBus.$on("shown", this.onShow);
+    this.$modal.EventBus.$on("hide", this.onHide);
+
+    this.$context.EventBus.$on("showContextMenu", this.onShowContextMenu);
+    this.$context.EventBus.$on("hideContextMenu", this.onHideContextMenu);
   },
   updated() {},
   beforeDestroy() {
     this.currentPage = "";
     delete this.currentPage;
+
+    this.$modal.EventBus.$off("shown", this.onShow);
+    this.$modal.EventBus.$off("hide", this.onHide);
+
+    this.$context.EventBus.$off("showContextMenu", this.onShowContextMenu);
+    this.$context.EventBus.$off("hideContextMenu", this.onHideContextMenu);
   },
 };
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+}
+</style>

@@ -1,9 +1,5 @@
 <template>
-  <form
-    v-if="showFormNewCost"
-    class="costs__add-form"
-    @submit.prevent="onSaveClick()"
-  >
+  <form class="costs__add-form" @submit.prevent="onSaveClick()">
     <label for="cost-description">Описание платежа</label>
     <select
       v-model="descriptionCost"
@@ -32,46 +28,47 @@
       required
     />
     <input
+      v-show="createCost"
       class="costs__add-button add-form-button"
       type="submit"
       value="add cost"
+    />
+    <input
+      v-show="editCost"
+      class="costs__add-button add-form-button"
+      type="submit"
+      value="save cost"
+    />
+    <input
+      v-show="editCost"
+      class="costs__add-button add-form-button"
+      type="button"
+      value="close form"
     />
   </form>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "NewCost",
   props: {
-    showNewCost: {
-      type: Boolean,
-      default: () => false,
-    },
-    costData: {
-      type: Object,
-      default: () => null,
-    },
-    costManage: {
-      type: Object,
-      default: () => null,
-    },
+    settings: Object,
   },
   data() {
     return {
       descriptionCost: null,
       dateCost: null,
       amountCost: null,
+      createCost: false,
+      editCost: false,
     };
   },
   computed: {
     ...mapGetters(["getCategoryList"]),
     categoryList() {
       return this.getCategoryList;
-    },
-    showFormNewCost() {
-      return this.showNewCost;
     },
   },
   watch: {
@@ -82,74 +79,75 @@ export default {
         this.descriptionCost = newValue;
       }
     },
-    dateCost: function (newValue) {
-      if (!newValue) {
-        this.dateCost = new Date().toISOString().slice(0, 10);
-      }
-    },
-    costManage: function (newValue) {
-      this.descriptionCost = newValue.descriptionCost;
-      this.dateCost = newValue.dateCost;
-      this.amountCost = newValue.amountCost;
-    },
-    costData: function (newValue) {
-      // Если все данные есть
-      if (newValue.category && newValue.value && this.dateCost) {
-        this.descriptionCost = newValue.category;
-        this.amountCost = newValue.value;
-
-        // Создаем запись автоматически, не открывая формы
-        this.onSaveClick();
-        // Возвращаемся в HomeView
-        this.$router.push("/");
-        // Если какие-то данные отсутствуют, открываем форму, заполняем и ждем
-      } else {
-        this.descriptionCost = newValue.category;
-        this.amountCost = newValue.value;
-      }
-    },
   },
   methods: {
     ...mapActions(["fetchCategoryData"]),
+    ...mapMutations(["addDataPaymentsList", "changeDataPaymentList"]),
     onSaveClick() {
-      const d = this.dateCost.split("-");
-      [d[0], d[2]] = [d[2], d[0]];
-      const dateCost = d.join(".");
-      const data = {
-        id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-          /[xy]/g,
-          function (c) {
-            let r = (Math.random() * 16) | 0,
-              v = c == "x" ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
-          }
-        ),
-        date: dateCost,
-        category: this.descriptionCost,
-        value: this.amountCost,
-        showNewCost: false,
-      };
-      this.$emit("addNewPayment", data);
+      if (this.settings.id) {
+        const dateCost = this.settings.dateCost;
+        const data = {
+          index: this.settings.index,
+          id: this.settings.id,
+          date: dateCost,
+          category: this.descriptionCost,
+          value: this.amountCost,
+          showNewCost: false,
+        };
+        this.changeDataPaymentList(data);
+        this.amountCost = null;
+      } else {
+        const d = this.dateCost.split("-");
+        [d[0], d[2]] = [d[2], d[0]];
+        const dateCost = d.join(".");
 
-      this.descriptionCost = null;
-      this.dateCost = null;
-      this.amountCost = null;
-
-      if (this.$route.params.name === "newCost") {
-        this.$router.push("/");
+        const data = {
+          id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+            /[xy]/g,
+            function (c) {
+              let r = (Math.random() * 16) | 0,
+                v = c == "x" ? r : (r & 0x3) | 0x8;
+              return v.toString(16);
+            }
+          ),
+          date: dateCost,
+          category: this.descriptionCost,
+          value: this.amountCost,
+          showNewCost: false,
+        };
+        this.addDataPaymentsList(data);
+        this.amountCost = null;
       }
-    },
-    onSaveCategory() {
-      this.$emit("addNewCategory", this.newCategory);
-      this.newCategory = null;
     },
   },
   async mounted() {
     if (!this.categoryList.length) {
       await this.fetchCategoryData();
+    }
+    if (this.settings.editCost) {
+      this.editCost = this.settings.editCost;
+    }
+
+    if (this.settings.createCost) {
+      this.createCost = this.settings.createCost;
+    }
+
+    if (this.settings.descriptionCost) {
+      this.descriptionCost = this.settings.descriptionCost;
+    } else {
       this.descriptionCost = this.categoryList[0];
     }
-    this.dateCost = "";
+
+    /* if (this.settings.dateCost) {
+      this.dateCost = new Date(Date.parse(this.settings.dateCost))
+        .toISOString()
+        .slice(0, 10);
+    } else {
+      this.dateCost = new Date().toISOString().slice(0, 10);
+    } */
+
+    this.dateCost = new Date().toISOString().slice(0, 10);
+    this.amountCost = this.settings.amountCost;
   },
 };
 </script>
