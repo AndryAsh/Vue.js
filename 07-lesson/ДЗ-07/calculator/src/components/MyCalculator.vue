@@ -4,8 +4,8 @@
 
     <div class="display">
       <div class="display-item">
-        <input v-model.number="operand1" type="number" />
-        <input v-model.number="operand2" type="number" />
+        <input v-model.number="operand1" type="number" name="operand1" />
+        <input v-model.number="operand2" type="number" name="operand2" />
         <span> = {{ resultComputed }}</span>
       </div>
       <div class="display-item">
@@ -36,26 +36,40 @@
       </button>
     </div>
 
-    <input type="checkbox" id="checkbox" v-model="checkedKeyboard" />
+    <input
+      type="checkbox"
+      id="checkbox"
+      v-model="checkedKeyboard"
+      name="checkbox-keyboard"
+    />
     <label for="checkbox">Отобразить экранную клавиатуру</label>
 
-    <div class="keyboard" v-show="screenKeyboard">
+    <div class="keyboard" v-if="screenKeyboard">
       <button
         v-for="item in numberButtons"
         :key="item"
+        :name="item"
         @click="numberKeyDown(item)"
       >
         {{ item }}
       </button>
-      <button @click="numberKeyDown('backspace')">&#10229;</button>
+      <button @click="numberKeyDown('backspace')" name="backspace">
+        &#10229;
+      </button>
 
-      <div class="operand-select" @click="operandSelect($event)">
+      <div class="operand-select">
         <span class="radio-selector">
-          <input type="radio" id="operand1" name="radioSelect" />
+          <input
+            type="radio"
+            id="operand1"
+            value="radio1"
+            v-model="picked"
+            checked
+          />
           <label for="operand1">Операнд 1</label>
         </span>
         <span class="radio-selector">
-          <input type="radio" id="operand2" name="radioSelect" />
+          <input type="radio" id="operand2" value="radio2" v-model="picked" />
           <label for="one">Операнд 2</label>
         </span>
       </div>
@@ -83,8 +97,7 @@ export default {
       fibResult: 0,
       checkedKeyboard: false,
       numberButtons: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-      picOperand1: false,
-      picOperand2: false,
+      picked: "radio1",
     };
   },
   methods: {
@@ -126,12 +139,8 @@ export default {
     },
     divide() {
       const { operand1, operand2 } = this;
-      if (operand2 === 0) {
-        this.error = "Делить на 0 нельзя!";
-      } else {
-        this.result = operand1 / operand2;
-        this.fibResult = this.fibb1 / this.fibb2;
-      }
+      this.result = operand1 / operand2;
+      this.fibResult = this.fibb1 / this.fibb2;
     },
     multiply() {
       const { operand1, operand2 } = this;
@@ -145,12 +154,14 @@ export default {
     },
     intDivide() {
       const { operand1, operand2 } = this;
-      if (operand2 === 0) {
+      this.result = Math.floor(operand1 / operand2);
+      this.fibResult = Math.floor(this.fibb1 / this.fibb2);
+      /* if (operand2 === 0) {
         this.error = "Делить на 0 нельзя!";
       } else {
         this.result = Math.floor(operand1 / operand2);
         this.fibResult = Math.floor(this.fibb1 / this.fibb2);
-      }
+      } */
     },
     getBtnStatusDisabled(op) {
       if ((op === "/" && !this.operand2) || (op === "int" && !this.operand2)) {
@@ -174,7 +185,7 @@ export default {
         this.operand2 = Number(String(this.operand2).concat(key));
       }
     },
-    operandSelect(event) {
+    /* operandSelect(event) {
       if (event.target.id === "operand1") {
         this.picOperand1 = true;
         this.picOperand2 = false;
@@ -182,7 +193,7 @@ export default {
         this.picOperand2 = true;
         this.picOperand1 = false;
       }
-    },
+    }, */
   },
   computed: {
     fibb1() {
@@ -200,11 +211,25 @@ export default {
     screenKeyboard() {
       return this.checkedKeyboard;
     },
-    radioOperand1() {
+    /* radioOperand1() {
       return this.picOperand1;
     },
     radioOperand2() {
       return this.picOperand2;
+    }, */
+    radioOperand1() {
+      if (this.picked === "radio1") {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    radioOperand2() {
+      if (this.picked === "radio2") {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };
