@@ -41,6 +41,7 @@
     />
     <input
       v-show="editCost"
+      @click="onCloseForm"
       class="costs__add-button add-form-button"
       type="button"
       value="close form"
@@ -96,6 +97,7 @@ export default {
         };
         this.changeDataPaymentList(data);
         this.amountCost = null;
+        this.$context.caller = null;
       } else {
         const d = this.dateCost.split("-");
         [d[0], d[2]] = [d[2], d[0]];
@@ -118,6 +120,9 @@ export default {
         this.addDataPaymentsList(data);
         this.amountCost = null;
       }
+    },
+    onCloseForm() {
+      this.$modal.hide();
     },
   },
   async mounted() {

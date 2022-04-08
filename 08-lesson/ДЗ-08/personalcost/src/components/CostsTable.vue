@@ -31,13 +31,17 @@ export default {
   },
   methods: {
     choiceItemTable(event) {
-      const clickCoord = { x: event.clientX, y: event.clientY };
+      const clickCoord = { x: event.clientX + 16, y: event.clientY };
       const uuid =
         event.target.parentElement.parentElement.querySelector(
           ".num"
         ).innerText;
 
-      this.$emit("selectedCost", { position: clickCoord, id: uuid });
+      this.$emit("selectedCost", {
+        position: clickCoord,
+        id: uuid,
+        target: event.target,
+      });
     },
   },
 };

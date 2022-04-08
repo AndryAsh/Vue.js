@@ -4,11 +4,19 @@ export default {
             return
         }
         this.installed = true;
+        this.caller = null;
+
         Vue.prototype.$context = {
             EventBus: new Vue(),
             showContextMenu(name, settings) {
-                /* console.log('Shown!'); */
-                this.EventBus.$emit('showContextMenu', { name, ...settings });
+                const caller = settings.target;
+                if (caller !== this.caller) {
+                    this.caller = caller;
+                    this.EventBus.$emit('showContextMenu', { name, ...settings });
+                } else {
+                    this.hideContextMenu();
+                    this.caller = null;
+                }
             },
             hideContextMenu() {
                 /* console.log('Hidden!'); */

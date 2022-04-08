@@ -106,6 +106,8 @@
 
     <transition name="fade" key="Modal">
       <modal-window-add-payment-form v-if="modalShown" :settings="settings" />
+    </transition>
+    <transition name="fade" key="Modal">
       <modal-window-context-menu v-if="contextShown" :settings="settings" />
     </transition>
   </div>
@@ -244,6 +246,7 @@ export default {
         index: costIndex,
         uuid: payload.id,
         position: payload.position,
+        target: payload.target,
       });
     },
   },
