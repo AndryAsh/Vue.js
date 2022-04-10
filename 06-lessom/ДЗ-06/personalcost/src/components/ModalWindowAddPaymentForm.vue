@@ -5,11 +5,6 @@
       <component :is="settings.content" :settings="settings" />
       <!-- <new-cost v-if="settings.content === 'new-cost'" :settings="settings" /> -->
     </div>
-    <div class="form-footer">
-      <!-- <button class="costs__add-button add-form-button" @click="onCloseClick()">
-        add cost
-      </button> -->
-    </div>
   </div>
 </template>
 
