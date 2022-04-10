@@ -1,10 +1,12 @@
 <template>
-  <ul>
-    <li>
-      <a href="#" class="context-menu" @click="onChangeCost">Редактировать</a>
-    </li>
-    <li>
-      <a href="#" class="context-menu" @click="onDeleteCost">Удалить</a>
+  <ul class="wrapper-context-menu" v-if="contextShown" :style="styles">
+    <li
+      class="context-item"
+      v-for="(item, idx) in items"
+      :key="idx"
+      @click="onClick(item)"
+    >
+      {{ item.text }}
     </li>
   </ul>
 </template>
@@ -14,24 +16,32 @@ import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "ContextMenuTableCosts",
+  data() {
+    return {
+      contextShown: false,
+      xPos: 0,
+      yPos: 0,
+      items: [],
+    };
+  },
   methods: {
     ...mapMutations(["delDataPaymentList"]),
-    onChangeCost() {
-      this.$context.hideContextMenu();
-      this.$modal.show("NewCost", {
-        content: "new-cost",
-        title: "change cost",
-        id: this.settings.uuid,
-        descriptionCost: this.getPaymentsList[this.settings.index].category,
-        amountCost: this.getPaymentsList[this.settings.index].value,
-        dateCost: this.getPaymentsList[this.settings.index].date,
-        index: this.settings.index,
-        editCost: true,
-      });
+    onClick(item) {
+      item.action();
+      this.onHideContextMenu();
     },
-    onDeleteCost() {
-      this.$context.hideContextMenu();
-      this.delDataPaymentList(this.settings);
+    onShowContextMenu({ itemsContextMenu, clickCoord }) {
+      this.items = itemsContextMenu;
+      this.setPositon(clickCoord);
+      this.contextShown = true;
+    },
+    onHideContextMenu() {
+      this.contextShown = false;
+      this.items = [];
+    },
+    setPositon(position) {
+      this.xPos = position.x;
+      this.yPos = position.y;
     },
   },
   props: {
@@ -39,6 +49,30 @@ export default {
   },
   computed: {
     ...mapGetters(["getPaymentsList"]),
+    styles() {
+      return {
+        top: `${this.yPos + 8}px`,
+        left: `${this.xPos + 16}px`,
+      };
+    },
+  },
+  mounted() {
+    this.$context.EventBus.$on("showContextMenu", this.onShowContextMenu);
+    this.$context.EventBus.$on("hideContextMenu", this.onHideContextMenu);
+  },
+  beforeDestroy() {
+    this.$context.EventBus.$off("showContextMenu", this.onShowContextMenu);
+    this.$context.EventBus.$off("hideContextMenu", this.onHideContextMenu);
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.wrapper-context-menu {
+  width: 15%;
+  margin: 0;
+  padding: 1rem;
+  position: absolute;
+  background: #efefef;
+}
+</style>

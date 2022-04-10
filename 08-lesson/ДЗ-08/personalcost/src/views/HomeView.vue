@@ -14,7 +14,7 @@
             />
           </div>
 
-          <costs-table :costs="currentElements" @selectedCost="selectedCost" />
+          <costs-table :costs="currentElements" />
 
           <costs-pagination
             :dataListSize="getPaymentsListSize"
@@ -104,11 +104,11 @@
       </div>
     </main>
 
-    <transition name="fade" key="Modal">
+    <transition name="fade" key="ModalAddCost">
       <modal-window-add-payment-form v-if="modalShown" :settings="settings" />
     </transition>
-    <transition name="fade" key="Modal">
-      <modal-window-context-menu v-if="contextShown" :settings="settings" />
+    <transition name="fade" key="ModalContextMenu">
+      <context-menu-table-costs />
     </transition>
   </div>
 </template>
@@ -132,9 +132,7 @@ export default {
       costData: null, // данные для передачи в компонент NewCosts
       showNewCost: false,
       showNewCategory: false,
-      categoryManage: null,
       modalShown: false, // Флаг управления модальным окном
-      contextShown: false,
     };
   },
   methods: {
@@ -142,34 +140,34 @@ export default {
     ...mapMutations(["addCategory", "addDataPaymentsList"]),
     prevPage() {
       const pageNum = this.pageNumber - 1;
-      this.currentPage.classList.remove("selected");
-      this.pageNumber = pageNum;
-      this.currentPage = this.selectPaginationPage;
       this.$router.push({
         name: "currentPage",
         params: { id: pageNum },
       });
+      this.currentPage.classList.remove("selected");
+      this.pageNumber = pageNum;
+      this.currentPage = this.selectPaginationPage;
     },
     nextPage() {
       const pageNum = this.pageNumber + 1;
-      this.currentPage.classList.remove("selected");
-      this.pageNumber = pageNum;
-      this.currentPage = this.selectPaginationPage;
       this.$router.push({
         name: "currentPage",
         params: { id: pageNum },
       });
+      this.currentPage.classList.remove("selected");
+      this.pageNumber = pageNum;
+      this.currentPage = this.selectPaginationPage;
     },
     changePage(newPage) {
       const pageNum = Number(newPage.dataset.id);
       if (pageNum !== Number(this.currentPage.dataset.id)) {
-        this.currentPage.classList.remove("selected");
-        this.pageNumber = pageNum;
-        this.currentPage = this.selectPaginationPage;
         this.$router.push({
           name: "currentPage",
           params: { id: pageNum },
         });
+        this.currentPage.classList.remove("selected");
+        this.pageNumber = pageNum;
+        this.currentPage = this.selectPaginationPage;
       }
     },
     addNewCategory(payload) {
@@ -207,9 +205,7 @@ export default {
       }
     },
     clickedAddCategory(payment) {
-      /* console.log(payment); */
       this.showNewCategory = payment.showNewCategory;
-      /* this.categoryManage = payment; */
 
       // Вызов модального окна с формой
       if (this.showNewCategory) {
@@ -228,26 +224,6 @@ export default {
     onHide() {
       this.modalShown = false;
       this.settings = {};
-    },
-    onShowContextMenu(settings) {
-      this.contextShown = true;
-      this.settings = settings;
-    },
-    onHideContextMenu() {
-      this.contextShown = false;
-      this.settings = {};
-    },
-    selectedCost(payload) {
-      const costIndex = this.getPaymentsList.findIndex(
-        (el) => el.id === payload.id
-      );
-      this.$context.showContextMenu("ContextMenuTableCosts", {
-        content: "ContextMenuTableCosts",
-        index: costIndex,
-        uuid: payload.id,
-        position: payload.position,
-        target: payload.target,
-      });
     },
   },
   computed: {
@@ -293,9 +269,9 @@ export default {
       import(
         /* webpackChunkName: "ModalComponent" */ "@/components/ModalWindowAddPaymentForm.vue"
       ),
-    ModalWindowContextMenu: () =>
+    ContextMenuTableCosts: () =>
       import(
-        /* webpackChunkName: "ModalComponent" */ "@/components/ModalWindowContextMenu.vue"
+        /* webpackChunkName: "ModalComponent" */ "@/components/ContextMenuTableCosts.vue"
       ),
   },
   watch: {
@@ -317,9 +293,6 @@ export default {
     /* debugger; */
     this.$modal.EventBus.$on("shown", this.onShow);
     this.$modal.EventBus.$on("hide", this.onHide);
-
-    this.$context.EventBus.$on("showContextMenu", this.onShowContextMenu);
-    this.$context.EventBus.$on("hideContextMenu", this.onHideContextMenu);
   },
   updated() {},
   beforeDestroy() {
@@ -328,9 +301,6 @@ export default {
 
     this.$modal.EventBus.$off("shown", this.onShow);
     this.$modal.EventBus.$off("hide", this.onHide);
-
-    this.$context.EventBus.$off("showContextMenu", this.onShowContextMenu);
-    this.$context.EventBus.$off("hideContextMenu", this.onHideContextMenu);
   },
 };
 </script>
