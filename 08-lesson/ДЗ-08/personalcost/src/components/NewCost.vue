@@ -1,5 +1,82 @@
 <template>
-  <form class="costs__add-form" @submit.prevent="onSaveClick()">
+  <v-form @submit.prevent="onSaveClick()">
+    <v-container fluid>
+      <v-col class="d-flex" cols="12">
+        <v-select
+          :items="categoryList"
+          v-model="descriptionCost"
+          label="Category of payment"
+          outlined
+        >
+        </v-select>
+      </v-col>
+      <v-col class="d-flex" cols="12">
+        <v-text-field
+          class="p-0 m-0"
+          :class="{ hasError: $v.dateCost.$error }"
+          type="date"
+          v-model="dateCost"
+          label="Date of payment"
+          single-line
+          outlined
+          required
+        ></v-text-field>
+      </v-col>
+      <v-col class="d-flex" cols="12">
+        <v-text-field
+          class="p-0 m-0"
+          :class="{ hasError: $v.amountCost.$error }"
+          type="number"
+          v-model="amountCost"
+          label="Amount of payment"
+          @input="$v.amountCost.$touch()"
+          @blur="$v.amountCost.$touch()"
+          single-line
+          outlined
+          clearable
+          required
+        ></v-text-field>
+      </v-col>
+      <v-col class="d-flex" cols="12">
+        <v-btn
+          v-show="createCost"
+          type="submit"
+          color="teal"
+          dark
+          x-large
+          class="font-weight-bold p-0"
+        >
+          add cost
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-show="editCost"
+          type="submit"
+          color="teal"
+          dark
+          x-large
+          class="font-weight-bold p-0"
+        >
+          save cost
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-show="editCost"
+          @click="onCloseForm"
+          color="teal"
+          dark
+          x-large
+          class="font-weight-bold p-0 ml-4"
+        >
+          close form
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-col>
+    </v-container>
+  </v-form>
+  <!-- <form class="costs__add-form" @submit.prevent="onSaveClick()">
     <label for="cost-description">Описание платежа</label>
     <select
       v-model="descriptionCost"
@@ -46,11 +123,13 @@
       type="button"
       value="close form"
     />
-  </form>
+  </form> -->
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
+/* import { validationMixin } from "vuelidate"; */
+import { required, between } from "vuelidate/lib/validators";
 
 export default {
   name: "NewCost",
@@ -61,10 +140,16 @@ export default {
     return {
       descriptionCost: null,
       dateCost: null,
-      amountCost: null,
+      amountCost: 0,
       createCost: false,
       editCost: false,
     };
+  },
+  /* mixins: [validationMixin], */
+  validations: {
+    descriptionCost: { required },
+    dateCost: { required },
+    amountCost: { between: between(1, 10000) },
   },
   computed: {
     ...mapGetters(["getCategoryList"]),
@@ -76,6 +161,7 @@ export default {
     descriptionCost: function (newValue) {
       if (!newValue) {
         this.descriptionCost = this.categoryList[0];
+        /* this.descriptionCost = this.categoryList[0]; */
       } else {
         this.descriptionCost = newValue;
       }
@@ -85,6 +171,9 @@ export default {
     ...mapActions(["fetchCategoryData"]),
     ...mapMutations(["addDataPaymentsList", "changeDataPaymentList"]),
     onSaveClick() {
+      this.$v.$touch();
+      if (this.$v.$error) return;
+
       if (this.settings.id) {
         const dateCost = this.settings.dateCost;
         const data = {
@@ -156,3 +245,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.v-application .d-flex {
+  padding: 0;
+}
+</style>

@@ -30,13 +30,24 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+$grey: #aeaeae;
+
 .wrapper {
-  width: 15%;
+  width: 30%;
   padding: 1rem;
   position: absolute;
-  top: 20%;
-  left: 6%;
-  background: #efefef;
+  top: 25%;
+  left: 3.8%;
+  background: #ffffff;
+  border: 1px solid $grey;
+  border-radius: 1%;
+  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+    0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+.form-header {
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 </style>

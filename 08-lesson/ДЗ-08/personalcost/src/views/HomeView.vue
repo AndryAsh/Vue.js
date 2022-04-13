@@ -1,5 +1,229 @@
 <template>
-  <div id="app">
+  <v-container>
+    <v-row>
+      <v-col>
+        <div class="text-h5 text-sm-h3 pb-3">My personal costs</div>
+
+        <add-cost-button
+          :showNewCost="showNewCost"
+          @newCostManage="clickedAddCost"
+        />
+        <!-- <v-spacer></v-spacer> -->
+        <add-category-button
+          :showNewCategory="showNewCategory"
+          @newCategoryManage="clickedAddCategory"
+        />
+
+        <costs-table :costs="currentElements" />
+
+        <costs-pagination
+          :dataListSize="getPaymentsListSize"
+          :currentPage="pageNumber"
+          :paginationSize="paginationSize"
+          @changePage="changePage"
+        />
+
+        <v-container>
+          <v-row>
+            <v-col cols="4" align-self="center">
+              <v-btn
+                color="teal"
+                dark
+                block
+                x-large
+                class="font-weight-bold costs-template"
+                @click="
+                  onCostButton({
+                    name: 'newCostFull',
+                    params: { category: 'Food', value: 200, show: true },
+                  })
+                "
+              >
+                Food 200 <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="4" align-self="center">
+              <v-btn
+                color="teal"
+                dark
+                block
+                x-large
+                class="font-weight-bold costs-buttons-template"
+                @click="
+                  onCostButton({
+                    name: 'newCostFull',
+                    params: { category: 'Transport', value: 50, show: true },
+                  })
+                "
+              >
+                Transport 50 <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="4" align-self="center">
+              <v-btn
+                color="teal"
+                dark
+                block
+                x-large
+                class="font-weight-bold costs-template"
+                @click="
+                  onCostButton({
+                    name: 'newCostFull',
+                    params: {
+                      category: 'Entertainment',
+                      value: 2000,
+                      show: true,
+                    },
+                  })
+                "
+              >
+                Entertainment 2000 <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+
+        <v-container>
+          <v-row>
+            <v-col cols="4" align-self="center">
+              <v-btn
+                color="teal"
+                dark
+                block
+                x-large
+                class="font-weight-bold costs-template"
+                @click="
+                  onCostButton({
+                    name: 'newCost',
+                    params: { category: 'Food', show: true },
+                  })
+                "
+              >
+                Food<v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="4" align-self="center">
+              <v-btn
+                color="teal"
+                dark
+                block
+                x-large
+                class="font-weight-bold costs-template"
+                @click="
+                  onCostButton({
+                    name: 'newCost',
+                    params: { category: 'Transport', show: true },
+                  })
+                "
+              >
+                Transport<v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="4" align-self="center">
+              <v-btn
+                color="teal"
+                dark
+                block
+                x-large
+                class="font-weight-bold costs-template"
+                @click="
+                  onCostButton({
+                    name: 'newCost',
+                    params: { category: 'Entertainment', show: true },
+                  })
+                "
+              >
+                Entertainment<v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+        <!-- <div class="costs-buttons">
+          <button
+            @click="
+              onCostButton({
+                name: 'newCostFull',
+                params: { category: 'Food', value: 200, show: true },
+              })
+            "
+            class="costs-buttons__template"
+          >
+            Food 200
+          </button>
+          <button
+            @click="
+              onCostButton({
+                name: 'newCostFull',
+                params: { category: 'Transport', value: 50, show: true },
+              })
+            "
+            class="costs-buttons__template"
+          >
+            Transport 50
+          </button>
+          <button
+            @click="
+              onCostButton({
+                name: 'newCostFull',
+                params: {
+                  category: 'Entertainment',
+                  value: 2000,
+                  show: true,
+                },
+              })
+            "
+            class="costs-buttons__template"
+          >
+            Entertainment 2000
+          </button>
+        </div> -->
+
+        <!-- <div class="costs-buttons">
+          <button
+            @click="
+              onCostButton({
+                name: 'newCost',
+                params: { category: 'Food', show: true },
+              })
+            "
+            class="costs-buttons__template"
+          >
+            Food
+          </button>
+          <button
+            @click="
+              onCostButton({
+                name: 'newCost',
+                params: { category: 'Transport', show: true },
+              })
+            "
+            class="costs-buttons__template"
+          >
+            Transport
+          </button>
+          <button
+            @click="
+              onCostButton({
+                name: 'newCost',
+                params: { category: 'Entertainment', show: true },
+              })
+            "
+            class="costs-buttons__template"
+          >
+            Entertainment
+          </button>
+        </div> -->
+      </v-col>
+      <v-col>GRAPHICS</v-col>
+    </v-row>
+    <transition name="fade" key="ModalAddCost">
+      <modal-window-add-payment-form v-if="modalShown" :settings="settings" />
+    </transition>
+    <transition name="fade" key="ModalContextMenu">
+      <context-menu-table-costs />
+    </transition>
+  </v-container>
+  <!-- <div id="app">
     <main>
       <div class="content">
         <div class="costs">
@@ -110,7 +334,7 @@
     <transition name="fade" key="ModalContextMenu">
       <context-menu-table-costs />
     </transition>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -138,7 +362,7 @@ export default {
   methods: {
     ...mapActions(["fetchData"]),
     ...mapMutations(["addCategory", "addDataPaymentsList"]),
-    prevPage() {
+    /* prevPage() {
       const pageNum = this.pageNumber - 1;
       this.$router.push({
         name: "currentPage",
@@ -157,9 +381,10 @@ export default {
       this.currentPage.classList.remove("selected");
       this.pageNumber = pageNum;
       this.currentPage = this.selectPaginationPage;
-    },
+    }, */
     changePage(newPage) {
-      const pageNum = Number(newPage.dataset.id);
+      this.pageNumber = newPage;
+      /* const pageNum = Number(newPage.dataset.id);
       if (pageNum !== Number(this.currentPage.dataset.id)) {
         this.$router.push({
           name: "currentPage",
@@ -168,7 +393,7 @@ export default {
         this.currentPage.classList.remove("selected");
         this.pageNumber = pageNum;
         this.currentPage = this.selectPaginationPage;
-      }
+      } */
     },
     addNewCategory(payload) {
       this.addCategory(payload);
@@ -256,7 +481,7 @@ export default {
       const el = document.querySelector(
         `.costs__pagination__page[data-id='${this.pageNumber}']`
       );
-      el.classList.add("selected");
+      /* el.classList.add("selected"); */
       return el;
     },
   },
@@ -305,12 +530,16 @@ export default {
 };
 </script>
 
-<style scoped>
+<style type="scss">
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s ease;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
   opacity: 0;
+}
+.v-btn.costs-template {
+  max-width: 100%;
+  width: 100%;
 }
 </style>

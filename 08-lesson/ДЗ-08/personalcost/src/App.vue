@@ -1,177 +1,124 @@
 <template>
-  <div id="app">
-    <div class="container">
-      <header class="page-header">
-        <span class="page-header__title">
-          <router-link to="/">my personal costs</router-link>
-        </span>
-      </header>
-      <router-view></router-view>
-    </div>
-  </div>
+  <v-app>
+    <v-app-bar app color="#ffffff">
+      <div class="d-flex align-center">
+        <v-img
+          alt="Vuetify Logo"
+          class="shrink mr-2"
+          contain
+          src="@/assets/logo.png"
+          transition="scale-transition"
+          width="40"
+        />
+        <v-btn class="font-weight-bold" x-large plain :ripple="false" to="/">
+          Home
+        </v-btn>
+        <!-- <v-spacer></v-spacer> -->
+        <v-btn
+          class="font-weight-bold"
+          x-large
+          plain
+          :ripple="false"
+          to="/about"
+        >
+          About
+        </v-btn>
+      </div>
+      <!-- <v-app-bar-title class="page-header">
+        <div class="d-flex align-center">
+          <v-img
+            alt="Vuetify Logo"
+            class="shrink mr-2"
+            contain
+            src="@/assets/logo.png"
+            transition="scale-transition"
+            width="40"
+          />
+          <router-link to="/">
+            <span class="text-h4 text-sm-h4 pb-4 page-header__title"
+              >my personal costs</span
+            >
+          </router-link>
+        </div>
+      </v-app-bar-title> -->
+    </v-app-bar>
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
+  <!-- <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+      <div class="d-flex align-center">
+        <v-img
+          alt="Vuetify Logo"
+          class="shrink mr-2"
+          contain
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          transition="scale-transition"
+          width="40"
+        />
+
+        <v-img
+          alt="Vuetify Name"
+          class="shrink mt-1 hidden-sm-and-down"
+          contain
+          min-width="100"
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          width="100"
+        />
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Latest Release</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-main>
+      <router-view/>
+    </v-main>
+  </v-app> -->
 </template>
 
+<script>
+</script>
+
 <style lang="scss">
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
 $grey: #aeaeae;
 $lihgt-grey: #dadada;
 $dark-grey: #696969;
 $green: #25a79a;
 $white: #ffffff;
 
-body {
-  margin: 0;
-  padding: 0;
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* text-align: center;
+  vertical-align: middle; */
+  color: $dark-grey;
 }
+
 a {
   text-decoration: none;
+  color: $white;
 }
-.container {
-  max-width: 95%;
-  width: 100%;
-  margin: 0 auto;
-}
-.page-header {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-top: 2rem;
-  &__title {
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 2rem;
-    color: $dark-grey;
-    font-weight: bold;
-  }
-}
-.content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-top: 1rem;
-}
-.costs {
-  display: flex;
-  flex-direction: column;
-  &__add {
-    display: flex;
-    justify-content: flex-start;
-    gap: 2%;
-    position: relative;
-  }
-  &__add-button,
-  .costs-buttons__template {
-    width: 30%;
-    height: 3rem;
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 1rem;
-    font-weight: bold;
-    color: $white;
-    border: 1px solid $green;
-    border-radius: 0.3rem;
-    background-color: $green;
-  }
-  &__add-form {
-    display: flex;
-    position: absolute;
-    box-sizing: border-box;
-    width: 50%;
-    top: 4rem;
-    left: 0;
-    padding: 2%;
-    border: 1px solid $dark-grey;
-    border-radius: 0.5rem;
-    flex-direction: column;
-    align-items: center;
-    background-color: $white;
-    box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.3);
-    &__input,
-    &__select {
-      display: inline-block;
-      margin: 2% 2%;
-      width: 85%;
-      padding: 1rem;
-      border: 1px solid $dark-grey;
-      border-radius: 0.5rem;
-      box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);
-    }
-    &__select {
-      width: 95%;
-      background-color: $white;
-    }
-    &__manage {
-      display: flex;
-      width: 100%;
-      justify-content: space-around;
-    }
-  }
-  .add-form-button {
-    width: 45%;
-    margin-top: 4%;
-    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);
-  }
-  &__table {
-    margin: 1rem 0;
-    border: 1px solid $grey;
-    border-collapse: collapse;
-    &__th {
-      border: 1px solid $grey;
-      padding: 0.5rem 0;
-      background-color: $dark-grey;
-      color: $white;
-    }
-    &__td {
-      border: 1px solid $grey;
-      padding: 0.5rem;
-    }
-    &__tr:nth-child(odd) {
-      background-color: $lihgt-grey;
-    }
-  }
-  &__pagination {
-    &__button {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin: 0 0.2rem;
-      color: $dark-grey;
-      cursor: pointer;
-      background-color: $white;
-      border: none;
-    }
-    &__page {
-      color: $dark-grey;
-    }
-  }
-}
-.selected {
-  font-weight: bold;
-  color: $green;
-}
-.num,
-.date,
-.cat {
-  text-align: center;
-}
-.val {
-  text-align: end;
-}
-.costs-buttons {
-  display: flex;
-  margin: 1rem 0 0 0;
-  justify-content: space-between;
-}
-a {
-  font-weight: bold;
-  color: #2c3e50;
 
-  &.router-link-exact-active {
+.page-header {
+  &__title {
+    text-transform: uppercase;
+    font-weight: bold;
     color: $dark-grey;
   }
-} */
+}
 </style>

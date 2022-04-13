@@ -1,6 +1,14 @@
 <template>
-  <!-- <div> -->
-  <div class="costs__pagination" @click="onClickPagination($event)">
+  <div class="my-4 text-center">
+    <v-pagination
+      v-model="page"
+      :length="amountPages"
+      circle
+      color="#25a79a"
+    ></v-pagination>
+  </div>
+
+  <!-- <div class="costs__pagination" @click="onClickPagination($event)">
     <button
       :disabled="currentPage == 1"
       class="costs__pagination__button"
@@ -28,12 +36,17 @@
     >
       &rang;
     </button>
-  </div>
+  </div> -->
 </template>
 
 <script>
 export default {
   name: "CostsPagination",
+  data() {
+    return {
+      page: 1,
+    };
+  },
   props: {
     dataListSize: {
       type: Number,
@@ -71,6 +84,12 @@ export default {
       } else if (event.target.localName === "a") {
         this.$emit("changePage", event.target);
       }
+    },
+  },
+  watch: {
+    page(newPage) {
+      //console.log(newPage);
+      this.$emit("changePage", newPage);
     },
   },
 };

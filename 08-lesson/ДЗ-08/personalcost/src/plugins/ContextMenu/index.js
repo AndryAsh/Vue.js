@@ -4,21 +4,22 @@ export default {
             return
         }
         this.installed = true;
-        this.target = null;
+        this.caller = null;
 
         Vue.prototype.$context = {
             EventBus: new Vue(),
-            showContextMenu(itemsContextMenu, target, clickCoord) {
-                if (target !== this.target) {
-                    this.target = target;
-                    this.EventBus.$emit('showContextMenu', { itemsContextMenu, clickCoord });
+            showContextMenu(itemsContextMenu, event/* target, clickCoord */) {
+                const caller = event.target;
+                if (caller !== this.caller) {
+                    this.caller = caller;
+                    this.EventBus.$emit('showContextMenu', { itemsContextMenu, event });
                 } else {
                     this.hideContextMenu();
-                    this.target = null;
+                    this.caller = null;
                 }
             },
             hideContextMenu() {
-                this.target = null;
+                this.caller = null;
                 this.EventBus.$emit('hideContextMenu');
             }
         }

@@ -1,12 +1,17 @@
 <template>
-  <!--   <div> -->
-  <button @click="clickedAddCost()" class="costs__add-button">
+  <v-btn
+    color="teal"
+    dark
+    x-large
+    class="my-4 font-weight-bold"
+    @click="clickedAddCost()"
+    ml-4
+  >
+    {{ showNewCost ? txtBtnClose : txtBtnAdd }} <v-icon>mdi-plus</v-icon>
+  </v-btn>
+  <!-- <button @click="clickedAddCost()" class="costs__add-button">
     {{ showNewCost ? txtBtnClose : txtBtnAdd }}
-  </button>
-  <!-- <button @click="onCategoryClick()" class="costs__add-button">
-      {{ showFormNewCategory ? txtBtnClose : "add category" }}
-    </button> -->
-  <!--   </div> -->
+  </button> -->
 </template>
 
 <script>

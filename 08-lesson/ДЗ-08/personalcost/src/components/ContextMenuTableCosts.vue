@@ -30,18 +30,28 @@ export default {
       item.action();
       this.onHideContextMenu();
     },
-    onShowContextMenu({ itemsContextMenu, clickCoord }) {
+    onShowContextMenu({
+      itemsContextMenu,
+      event /* caller */ /* clickCoord */,
+    }) {
+      /* console.log(caller); */
       this.items = itemsContextMenu;
-      this.setPositon(clickCoord);
+      this.setPositon(event /* caller */);
       this.contextShown = true;
     },
     onHideContextMenu() {
       this.contextShown = false;
       this.items = [];
     },
-    setPositon(position) {
-      this.xPos = position.x;
-      this.yPos = position.y;
+    setPositon(event /* caller */) {
+      /* const clickCoord = { x: event.clientX, y: event.clientY }; */
+      /* console.log(caller); */
+      /* const position = caller.getBoundingClientRect(); */
+
+      this.xPos = event.clientX + 20;
+      this.yPos = event.clientY - 50;
+      /* this.xPos = position.left;
+      this.yPos = position.top; */
     },
   },
   props: {
@@ -51,8 +61,8 @@ export default {
     ...mapGetters(["getPaymentsList"]),
     styles() {
       return {
-        top: `${this.yPos + 8}px`,
-        left: `${this.xPos + 16}px`,
+        top: `${this.yPos /*  + 8 */}px`,
+        left: `${this.xPos /*  + 16 */}px`,
       };
     },
   },

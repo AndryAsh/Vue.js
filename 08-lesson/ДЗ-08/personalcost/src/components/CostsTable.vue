@@ -1,5 +1,19 @@
 <template>
-  <table class="costs__table">
+  <v-data-table
+    class="my-4 costs__table"
+    dense
+    :headers="headers"
+    :items="costs"
+    item-key="id"
+    hide-default-footer
+  >
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-icon small @click="choiceItemTable(item, $event)"> settings </v-icon>
+    </template>
+  </v-data-table>
+</template>
+
+  <!-- <table class="costs__table">
     <tr>
       <th class="costs__table__th">#</th>
       <th class="costs__table__th">Date</th>
@@ -17,14 +31,30 @@
         }}</a>
       </td>
     </tr>
-  </table>
-</template>
+  </table> -->
+<!-- </template> -->
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "CostsTable",
+  data() {
+    return {
+      headers: [
+        { text: "#", align: "center", value: "id", sortable: false },
+        { text: "Date", align: "center", value: "date", sortable: false },
+        {
+          text: "Category",
+          align: "center",
+          value: "category",
+          sortable: false,
+        },
+        { text: "Value", align: "center", value: "value", sortable: false },
+        { text: "", align: "center", value: "actions", sortable: false },
+      ],
+    };
+  },
   props: {
     costs: {
       type: Array,
@@ -33,43 +63,31 @@ export default {
   },
   methods: {
     ...mapMutations(["delDataPaymentList"]),
-    choiceItemTable(event) {
-      const clickCoord = { x: event.clientX, y: event.clientY };
-      const uuid =
-        event.target.parentElement.parentElement.querySelector(
-          ".num"
-        ).innerText;
-      const target = event.target;
-
+    choiceItemTable(item, event) {
       const itemsContextMenu = [
         {
           text: "edit",
           action: () => {
-            this.editItem({
-              position: clickCoord,
-              id: uuid,
-            });
+            this.editItem(item.id);
           },
         },
         {
           text: "delete",
           action: () => {
-            this.deleteItem(uuid);
+            this.deleteItem(item.id);
           },
         },
       ];
 
-      this.$context.showContextMenu(itemsContextMenu, target, clickCoord);
+      this.$context.showContextMenu(itemsContextMenu, event);
     },
-    editItem(payload) {
+    editItem(id) {
       this.$context.hideContextMenu();
-      const indexItem = this.getPaymentsList.findIndex(
-        (el) => el.id === payload.id
-      );
+      const indexItem = this.getPaymentsList.findIndex((el) => el.id === id);
       this.$modal.show("NewCost", {
         content: "new-cost",
         title: "change cost",
-        id: payload.id,
+        id: id,
         descriptionCost: this.getPaymentsList[indexItem].category,
         amountCost: this.getPaymentsList[indexItem].value,
         dateCost: this.getPaymentsList[indexItem].date,
@@ -77,9 +95,9 @@ export default {
         editCost: true,
       });
     },
-    deleteItem(uuid) {
+    deleteItem(id) {
       this.$context.hideContextMenu();
-      const indexItem = this.getPaymentsList.findIndex((el) => el.id === uuid);
+      const indexItem = this.getPaymentsList.findIndex((el) => el.id === id);
       this.delDataPaymentList(indexItem);
     },
   },
@@ -88,3 +106,31 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+$grey: #aeaeae;
+$lihgt-grey: #dadada;
+$dark-grey: #696969;
+$white: #ffffff;
+
+.v-data-table {
+  margin: 1rem 0;
+  border: 1px solid $grey;
+  border-collapse: collapse;
+}
+.v-data-table-header th {
+  font-weight: bold;
+  background-color: $dark-grey;
+}
+.v-data-table-header th > span {
+  font-size: 1rem;
+  color: $white;
+}
+.v-data-table td {
+  font-size: 1rem !important;
+  border: 1px solid $grey;
+}
+.v-data-table tr:nth-child(even) {
+  background-color: $lihgt-grey;
+}
+</style>

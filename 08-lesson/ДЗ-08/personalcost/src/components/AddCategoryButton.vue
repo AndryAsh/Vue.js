@@ -1,7 +1,16 @@
 <template>
-  <button @click="clickedAddCategory()" class="costs__add-button">
+  <v-btn
+    color="teal"
+    dark
+    x-large
+    class="ml-2 my-4 font-weight-bold"
+    @click="clickedAddCategory()"
+  >
+    {{ showNewCategory ? txtBtnClose : txtBtnAdd }} <v-icon>mdi-plus</v-icon>
+  </v-btn>
+  <!-- <button @click="clickedAddCategory()" class="costs__add-button">
     {{ showNewCategory ? txtBtnClose : txtBtnAdd }}
-  </button>
+  </button> -->
 </template>
 
 <script>
