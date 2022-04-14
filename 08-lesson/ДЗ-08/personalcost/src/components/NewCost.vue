@@ -13,7 +13,7 @@
       <v-col class="d-flex" cols="12">
         <v-text-field
           class="p-0 m-0"
-          :class="{ hasError: $v.dateCost.$error }"
+          :class="{ hasError: $v.dateCost.$invalid }"
           type="date"
           v-model="dateCost"
           label="Date of payment"
@@ -25,9 +25,9 @@
       <v-col class="d-flex" cols="12">
         <v-text-field
           class="p-0 m-0"
-          :class="{ hasError: $v.amountCost.$error }"
+          :class="{ hasError: $v.amountCost.$invalid }"
           type="number"
-          v-model="amountCost"
+          v-model.trim="$v.amountCost.$model"
           label="Amount of payment"
           @input="$v.amountCost.$touch()"
           @blur="$v.amountCost.$touch()"
@@ -129,7 +129,7 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
 /* import { validationMixin } from "vuelidate"; */
-import { required, between } from "vuelidate/lib/validators";
+import { required /* between */ } from "vuelidate/lib/validators";
 
 export default {
   name: "NewCost",
@@ -149,7 +149,8 @@ export default {
   validations: {
     descriptionCost: { required },
     dateCost: { required },
-    amountCost: { between: between(1, 10000) },
+    amountCost: { required },
+    /* amountCost: { between: between(1, 10000) }, */
   },
   computed: {
     ...mapGetters(["getCategoryList"]),
@@ -161,7 +162,6 @@ export default {
     descriptionCost: function (newValue) {
       if (!newValue) {
         this.descriptionCost = this.categoryList[0];
-        /* this.descriptionCost = this.categoryList[0]; */
       } else {
         this.descriptionCost = newValue;
       }
@@ -172,7 +172,9 @@ export default {
     ...mapMutations(["addDataPaymentsList", "changeDataPaymentList"]),
     onSaveClick() {
       this.$v.$touch();
-      if (this.$v.$error) return;
+      if (this.$v.$invalid) {
+        return;
+      }
 
       if (this.settings.id) {
         const dateCost = this.settings.dateCost;
@@ -214,10 +216,10 @@ export default {
       this.$modal.hide();
     },
   },
-  async mounted() {
-    if (!this.categoryList.length) {
+  /* async */ mounted() {
+    /* if (!this.categoryList.length) {
       await this.fetchCategoryData();
-    }
+    } */
     if (this.settings.editCost) {
       this.editCost = this.settings.editCost;
     }

@@ -1,5 +1,33 @@
 <template>
-  <form
+  <v-form @submit.prevent="onSaveClick($event)">
+    <v-container fluid>
+      <v-col class="d-flex" cols="12">
+        <v-text-field
+          class="p-0 m-0"
+          :class="{ hasError: $v.newCategory.$invalid }"
+          type="text"
+          v-model="$v.newCategory.$model"
+          label="Название новой категории"
+          single-line
+          outlined
+          required
+        ></v-text-field>
+      </v-col>
+      <v-col class="d-flex" cols="12">
+        <v-btn
+          type="submit"
+          color="teal"
+          dark
+          x-large
+          class="font-weight-bold p-0"
+        >
+          add category
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </v-col>
+    </v-container>
+  </v-form>
+  <!-- <form
     id="addCategoryForm"
     class="costs__add-form"
     @submit.prevent="onSaveClick($event)"
@@ -17,11 +45,12 @@
       type="submit"
       value="add category"
     />
-  </form>
+  </form> -->
 </template>
 
 <script>
 import { mapMutations, mapGetters, mapActions } from "vuex";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "NewCategory",
@@ -33,6 +62,9 @@ export default {
       newCategory: null,
     };
   },
+  validations: {
+    newCategory: { required },
+  },
   computed: {
     ...mapGetters(["getCategoryList"]),
   },
@@ -40,6 +72,10 @@ export default {
     ...mapMutations(["addCategory"]),
     ...mapActions(["fetchCategoryData"]),
     onSaveClick() {
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        return;
+      }
       this.addCategory(this.newCategory);
       this.newCategory = null;
     },
@@ -51,3 +87,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.v-application .d-flex {
+  padding: 0;
+}
+</style>

@@ -138,203 +138,21 @@
             </v-col>
           </v-row>
         </v-container>
-        <!-- <div class="costs-buttons">
-          <button
-            @click="
-              onCostButton({
-                name: 'newCostFull',
-                params: { category: 'Food', value: 200, show: true },
-              })
-            "
-            class="costs-buttons__template"
-          >
-            Food 200
-          </button>
-          <button
-            @click="
-              onCostButton({
-                name: 'newCostFull',
-                params: { category: 'Transport', value: 50, show: true },
-              })
-            "
-            class="costs-buttons__template"
-          >
-            Transport 50
-          </button>
-          <button
-            @click="
-              onCostButton({
-                name: 'newCostFull',
-                params: {
-                  category: 'Entertainment',
-                  value: 2000,
-                  show: true,
-                },
-              })
-            "
-            class="costs-buttons__template"
-          >
-            Entertainment 2000
-          </button>
-        </div> -->
-
-        <!-- <div class="costs-buttons">
-          <button
-            @click="
-              onCostButton({
-                name: 'newCost',
-                params: { category: 'Food', show: true },
-              })
-            "
-            class="costs-buttons__template"
-          >
-            Food
-          </button>
-          <button
-            @click="
-              onCostButton({
-                name: 'newCost',
-                params: { category: 'Transport', show: true },
-              })
-            "
-            class="costs-buttons__template"
-          >
-            Transport
-          </button>
-          <button
-            @click="
-              onCostButton({
-                name: 'newCost',
-                params: { category: 'Entertainment', show: true },
-              })
-            "
-            class="costs-buttons__template"
-          >
-            Entertainment
-          </button>
-        </div> -->
       </v-col>
-      <v-col>GRAPHICS</v-col>
+
+      <v-col>
+        <percent-diagramm />
+      </v-col>
     </v-row>
+
     <transition name="fade" key="ModalAddCost">
       <modal-window-add-payment-form v-if="modalShown" :settings="settings" />
     </transition>
+
     <transition name="fade" key="ModalContextMenu">
       <context-menu-table-costs />
     </transition>
   </v-container>
-  <!-- <div id="app">
-    <main>
-      <div class="content">
-        <div class="costs">
-          <div class="costs__add">
-            <add-cost-button
-              :showNewCost="showNewCost"
-              @newCostManage="clickedAddCost"
-            />
-            <add-category-button
-              :showNewCategory="showNewCategory"
-              @newCategoryManage="clickedAddCategory"
-            />
-          </div>
-
-          <costs-table :costs="currentElements" />
-
-          <costs-pagination
-            :dataListSize="getPaymentsListSize"
-            :currentPage="pageNumber"
-            :paginationSize="paginationSize"
-            @prevPage="prevPage"
-            @nextPage="nextPage"
-            @changePage="changePage"
-          />
-
-          <div class="costs-buttons">
-            <button
-              @click="
-                onCostButton({
-                  name: 'newCostFull',
-                  params: { category: 'Food', value: 200, show: true },
-                })
-              "
-              class="costs-buttons__template"
-            >
-              Food 200
-            </button>
-            <button
-              @click="
-                onCostButton({
-                  name: 'newCostFull',
-                  params: { category: 'Transport', value: 50, show: true },
-                })
-              "
-              class="costs-buttons__template"
-            >
-              Transport 50
-            </button>
-            <button
-              @click="
-                onCostButton({
-                  name: 'newCostFull',
-                  params: {
-                    category: 'Entertainment',
-                    value: 2000,
-                    show: true,
-                  },
-                })
-              "
-              class="costs-buttons__template"
-            >
-              Entertainment 2000
-            </button>
-          </div>
-
-          <div class="costs-buttons">
-            <button
-              @click="
-                onCostButton({
-                  name: 'newCost',
-                  params: { category: 'Food', show: true },
-                })
-              "
-              class="costs-buttons__template"
-            >
-              Food
-            </button>
-            <button
-              @click="
-                onCostButton({
-                  name: 'newCost',
-                  params: { category: 'Transport', show: true },
-                })
-              "
-              class="costs-buttons__template"
-            >
-              Transport
-            </button>
-            <button
-              @click="
-                onCostButton({
-                  name: 'newCost',
-                  params: { category: 'Entertainment', show: true },
-                })
-              "
-              class="costs-buttons__template"
-            >
-              Entertainment
-            </button>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <transition name="fade" key="ModalAddCost">
-      <modal-window-add-payment-form v-if="modalShown" :settings="settings" />
-    </transition>
-    <transition name="fade" key="ModalContextMenu">
-      <context-menu-table-costs />
-    </transition>
-  </div> -->
 </template>
 
 <script>
@@ -345,6 +163,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 import AddCostButton from "@/components/AddCostButton.vue";
 import AddCategoryButton from "@/components/AddCategoryButton.vue";
+import PercentDiagramm from "@/components/PercentDiagramm.vue";
 
 export default {
   name: "app",
@@ -360,40 +179,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchData"]),
+    ...mapActions(["fetchData", "fetchCategoryData"]),
     ...mapMutations(["addCategory", "addDataPaymentsList"]),
-    /* prevPage() {
-      const pageNum = this.pageNumber - 1;
-      this.$router.push({
-        name: "currentPage",
-        params: { id: pageNum },
-      });
-      this.currentPage.classList.remove("selected");
-      this.pageNumber = pageNum;
-      this.currentPage = this.selectPaginationPage;
-    },
-    nextPage() {
-      const pageNum = this.pageNumber + 1;
-      this.$router.push({
-        name: "currentPage",
-        params: { id: pageNum },
-      });
-      this.currentPage.classList.remove("selected");
-      this.pageNumber = pageNum;
-      this.currentPage = this.selectPaginationPage;
-    }, */
     changePage(newPage) {
       this.pageNumber = newPage;
-      /* const pageNum = Number(newPage.dataset.id);
-      if (pageNum !== Number(this.currentPage.dataset.id)) {
-        this.$router.push({
-          name: "currentPage",
-          params: { id: pageNum },
-        });
-        this.currentPage.classList.remove("selected");
-        this.pageNumber = pageNum;
-        this.currentPage = this.selectPaginationPage;
-      } */
     },
     addNewCategory(payload) {
       this.addCategory(payload);
@@ -460,6 +249,9 @@ export default {
     paymentsList() {
       return this.getPaymentsList;
     },
+    categoryList() {
+      return this.getCategoryList;
+    },
     currentElements() {
       return this.paymentsList.slice(
         this.paginationSize * (this.pageNumber - 1),
@@ -490,6 +282,7 @@ export default {
     CostsPagination,
     AddCostButton,
     AddCategoryButton,
+    PercentDiagramm,
     ModalWindowAddPaymentForm: () =>
       import(
         /* webpackChunkName: "ModalComponent" */ "@/components/ModalWindowAddPaymentForm.vue"
@@ -511,6 +304,9 @@ export default {
     /* debugger; */
     if (!this.getPaymentList) {
       await this.fetchData();
+    }
+    if (!this.categoryList.length) {
+      await this.fetchCategoryData();
     }
     this.currentPage = this.selectPaginationPage;
   },

@@ -1,5 +1,13 @@
 <template>
-  <ul class="wrapper-context-menu" v-if="contextShown" :style="styles">
+  <v-list class="wrapper-context-menu" v-if="contextShown" :style="styles">
+    <v-list-item v-for="(item, idx) in items" :key="idx">
+      <v-list-item-title class="item-text" @click="onClick(item)">
+        {{ item.text }}
+      </v-list-item-title>
+    </v-list-item>
+  </v-list>
+
+  <!-- <ul class="wrapper-context-menu" v-if="contextShown" :style="styles">
     <li
       class="context-item"
       v-for="(item, idx) in items"
@@ -8,7 +16,7 @@
     >
       {{ item.text }}
     </li>
-  </ul>
+  </ul> -->
 </template>
 
 <script>
@@ -30,28 +38,18 @@ export default {
       item.action();
       this.onHideContextMenu();
     },
-    onShowContextMenu({
-      itemsContextMenu,
-      event /* caller */ /* clickCoord */,
-    }) {
-      /* console.log(caller); */
+    onShowContextMenu({ itemsContextMenu, event }) {
       this.items = itemsContextMenu;
-      this.setPositon(event /* caller */);
+      this.setPositon(event);
       this.contextShown = true;
     },
     onHideContextMenu() {
       this.contextShown = false;
       this.items = [];
     },
-    setPositon(event /* caller */) {
-      /* const clickCoord = { x: event.clientX, y: event.clientY }; */
-      /* console.log(caller); */
-      /* const position = caller.getBoundingClientRect(); */
-
+    setPositon(event) {
       this.xPos = event.clientX + 20;
       this.yPos = event.clientY - 50;
-      /* this.xPos = position.left;
-      this.yPos = position.top; */
     },
   },
   props: {
@@ -61,8 +59,8 @@ export default {
     ...mapGetters(["getPaymentsList"]),
     styles() {
       return {
-        top: `${this.yPos /*  + 8 */}px`,
-        left: `${this.xPos /*  + 16 */}px`,
+        top: `${this.yPos}px`,
+        left: `${this.xPos}px`,
       };
     },
   },
@@ -77,12 +75,35 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+$grey: #aeaeae;
+$lihgt-grey: #dadada;
+$dark-grey: #696969;
+$green: #25a79a;
+$white: #ffffff;
+
 .wrapper-context-menu {
-  width: 15%;
   margin: 0;
-  padding: 1rem;
+  padding: 0;
   position: absolute;
-  background: #efefef;
+}
+.theme--light.v-list {
+  border: 1px solid $dark-grey;
+  border-radius: 5%;
+}
+.v-list-item {
+  cursor: pointer;
+}
+.v-list-item:hover {
+  background: $green;
+}
+.item-text {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: $dark-grey;
+}
+.item-text:hover {
+  color: $white;
 }
 </style>
