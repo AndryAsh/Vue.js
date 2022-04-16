@@ -66,7 +66,7 @@ export default new Vuex.Store({
           for (let i = 1; i <= 50; i++) {
             items.push({
               date: "23.12.2020",
-              category: cat[Math.floor(Math.random() * (cat.length - 1)) + 1],
+              category: cat[Math.floor(Math.random() * (cat.length - 0)) + 0],
               value: 179,
               id: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

@@ -1,19 +1,39 @@
 <template>
-  <div>
-    <!-- {{ data }} -->
-    <!-- {{ category }} -->
-    {{ percentageOfCategorySums }}
-  </div>
+  <v-col cols="8">
+    <Doughnut :chart-data="chartData" :chartOptions="options" />
+  </v-col>
 </template>
 
 <script>
-/* import { Doughnut, mixins } from "vue-chartjs";
-const { reactiveProp } = mixins; */
 import { mapGetters } from "vuex";
+import { Doughnut } from "vue-chartjs/legacy";
+
+import { Chart as ChartJS, registerables, ArcElement } from "chart.js";
+ChartJS.register(...registerables);
+ChartJS.register(ArcElement);
 
 export default {
-  /* extends: Doughnut,
-  mixins: [reactiveProp], */
+  name: "PercentDiagramm",
+  data() {
+    return {
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: true,
+            text: "Percent Diagramm from Payments",
+          },
+        },
+      },
+    };
+  },
+  components: {
+    /* Bar, */
+    Doughnut,
+  },
   computed: {
     ...mapGetters([
       "getCategoryList",
@@ -35,7 +55,7 @@ export default {
         this.category.forEach((category) => {
           const sumCategoriesItem = this.payments
             .filter((item) => item.category === category)
-            .reduce((sum, item) => sum + item.value, 0);
+            .reduce((sum, item) => sum + Number(item.value), 0);
 
           sumCategoriesItems.push(sumCategoriesItem);
         });
@@ -49,9 +69,38 @@ export default {
         return [];
       }
     },
+    chartData() {
+      return {
+        labels: this.category,
+        datasets: [
+          {
+            label: "Percent Diagramm from Payments",
+            data: this.percentageOfCategorySums,
+            backgroundColor: [
+              "rgb(255, 99, 132)",
+              "rgb(54, 162, 235)",
+              "rgb(255, 205, 86)",
+              "rgb(184, 255, 51)",
+              "rgb(255, 51, 255)",
+              "rgb(51, 246, 255)",
+            ],
+            hoverOffset: 4,
+          },
+        ],
+      };
+    },
   },
-  mounted() {
-    /* this.renderChart(this.chartData, this.options); */
-  },
+  /* watch: {
+    category(newCategory) {
+      this.chartData.labels = newCategory;
+    },
+    payments() {
+      this.chartData.datasets[0].data = this.percentageOfCategorySums;
+    },
+  }, */
+  /*  mounted() {
+    this.chartData.labels = [...this.category];
+    this.chartData.datasets[0].data = [...this.percentageOfCategorySums];
+  }, */
 };
 </script>
