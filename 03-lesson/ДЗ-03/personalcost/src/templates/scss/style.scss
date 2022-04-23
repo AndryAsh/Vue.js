@@ -1,0 +1,75 @@
+$grey: #aeaeae;
+$lihgt-grey: #dadada;
+$dark-grey: #696969;
+$green: #25a79a;
+$white: #ffffff;
+
+body {
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 95%;
+    width: 100%;
+    margin: 0 auto;
+}
+.page-header {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 2rem;
+    &__title {
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 2rem;
+        color: $dark-grey;
+        font-weight: bold;
+    }
+}
+.content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 1rem;
+}
+.costs {
+    display: flex;
+    flex-direction: column;
+    &__add {
+        width: 20%;
+        height: 3rem;
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 1rem;
+        font-weight: bold;
+        color: $white;
+        border: 1px solid $green;
+        border-radius: .3rem;
+        background-color: $green;
+    }
+    &__table {
+        margin: 1rem 0;
+        border: 1px solid $grey;
+        border-collapse: collapse;
+        &__th {
+            border: 1px solid $grey;
+            padding: .5rem 0;
+            background-color: $dark-grey;
+            color: $white;
+        }
+        &__td {
+            border: 1px solid $grey;
+            padding: .5rem;
+        }
+        &__tr:nth-child(odd) {
+            background-color: $lihgt-grey;
+        }
+    }  
+}
+.num,
+.date,
+.cat {
+    text-align: center;
+}
+.val {
+    text-align: end;
+}
