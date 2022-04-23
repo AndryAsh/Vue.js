@@ -140,7 +140,7 @@
         </v-container>
       </v-col>
 
-      <v-col>
+      <v-col align="center">
         <percent-diagramm />
       </v-col>
     </v-row>
@@ -258,10 +258,6 @@ export default {
         this.paginationSize * (this.pageNumber - 1) + this.paginationSize
       );
     },
-    /* getFPV() {
-      // return this.$store.getters.getFullPaymentsValue;
-      return this.getFullPaymentsValue;
-    }, */
     pageList() {
       const lst = [];
       for (let i = 1; i <= this.getDataListSize; i++) {
@@ -273,7 +269,6 @@ export default {
       const el = document.querySelector(
         `.costs__pagination__page[data-id='${this.pageNumber}']`
       );
-      /* el.classList.add("selected"); */
       return el;
     },
   },
